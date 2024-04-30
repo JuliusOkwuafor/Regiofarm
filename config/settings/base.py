@@ -34,7 +34,10 @@ LOCAL_APPS = [
     "authentication",
 ]
 
-THIRD_PARTY_APPS = ["rest_framework"]
+THIRD_PARTY_APPS = [
+    "rest_framework",
+    "drf_yasg",
+]
 
 INSTALLED_APPS = LOCAL_APPS + THIRD_PARTY_APPS + DJANGO_APPS
 
@@ -136,8 +139,23 @@ SIMPLE_JWT = {
     "TOKEN_REFRESH_SERIALIZER": "authentication.serializers.RefreshTokenSerializer",
 }
 
+# SWAGGER SETTINGS
+SWAGGER_SETTINGS = {
+    # "USE_SESSION_AUTH": False,
+    "SECURITY_DEFINITIONS": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+        },
+    },
+}
+
 # # CELERY
-# CELERY_BROKER_URL = "redis://localhost:6379/0"
+CELERY_BROKER_URL = (
+    f"redis://:{config('REDIS_PASSWORD')}@{config('REDIS_HOST')}:{config('REDIS_PORT')}"
+)
+# CELERY_BROKER_URL = f"redis://localhost:6379/0"
 # CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
 
 # otp

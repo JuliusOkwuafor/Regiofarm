@@ -4,9 +4,17 @@ from user.models import User, SellerProfile
 from typing import Any
 
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
+from user.validators import password_validator
 
 
 class RegisterUserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(
+        max_length=100,
+        min_length=8,
+        write_only=True,
+        required=True,
+        validators=[password_validator],
+    )
 
     class Meta:
         model = User
