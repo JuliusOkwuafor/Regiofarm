@@ -5,7 +5,8 @@ from .views import (
     ChangePasswordView,
     CheckResetPasswordOTP,
     LoginView,
-    RegisterView,
+    RegisterSellerView,
+    RegisterUserView,
     RequestPasswordResetView,
     ResetPasswordView,
     VerifyEmailView,
@@ -14,7 +15,8 @@ from .views import (
 app_name = "authentication"
 
 urlpatterns = [
-    path("register/", RegisterView.as_view(), name="register"),
+    path("register/", RegisterUserView.as_view(), name="register"),
+    path("register-seller/", RegisterSellerView.as_view(), name="register_seller"),
     path(
         "email-verify/<slug:uidb64>/<slug:token>/",
         VerifyEmailView.as_view(),

@@ -2,6 +2,7 @@ from rest_framework import serializers
 from user.enums import Role
 from user.models import User, SellerProfile
 from typing import Any
+from drf_yasg import openapi
 
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from user.validators import password_validator
@@ -35,7 +36,7 @@ class RegisterSellerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SellerProfile
-        exclude = ["created_at", "updated_at"]
+        exclude = ["id", "created_at", "updated_at"]
 
     def create(self, validated_data):
         user_data = validated_data.pop("user")

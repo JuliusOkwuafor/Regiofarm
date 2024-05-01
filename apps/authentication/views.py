@@ -3,7 +3,6 @@ import random
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from drf_yasg.utils import swagger_auto_schema
-from .openapi import role
 from rest_framework import permissions, status
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -19,21 +18,22 @@ from .serializers import (
     RegisterUserSerializer,
 )
 from .utils import activation_token
+from . import openapi
 
 
-class RegisterView(APIView):
+class RegisterUserView(APIView):
     permission_classes = [permissions.AllowAny]
     serializer_class = RegisterUserSerializer
 
-    @swagger_auto_schema(manual_parameters=[role])
+    @swagger_auto_schema(
+        manual_parameters=[openapi.role],
+        request_body=RegisterUserSerializer,
+        responses=openapi.registered_response,
+        operation_description="Create a new User",
+    )
     def post(self, request: Request):
         role = request.query_params.get("role", None)
-        if role == "seller":
-            serializer = RegisterSellerSerializer(data=request.data)
-        else:
-            serializer = RegisterUserSerializer(
-                data=request.data, context={"role": role}
-            )
+        serializer = self.serializer_class(data=request.data, context={"role": role})
         if not serializer.is_valid():
             return APIResponse(
                 msg=serializer.errors, status=status.HTTP_400_BAD_REQUEST, code=40000
@@ -44,9 +44,36 @@ class RegisterView(APIView):
         )
 
 
+class RegisterSellerView(APIView):
+    permission_classes = [permissions.AllowAny]
+    serializer_class = RegisterSellerSerializer
+
+    @swagger_auto_schema(
+        request_body=RegisterSellerSerializer,
+        responses=openapi.registered_seller_response,
+        operation_description="Create a new Seller",
+    )
+    def post(self, request: Request):
+        serializer = self.serializer_class(data=request.data)
+        if not serializer.is_valid():
+            return APIResponse(
+                msg=serializer.errors, status=status.HTTP_400_BAD_REQUEST, code=40000
+            )
+        serializer.save()
+        return APIResponse(
+            msg="Seller created successfully",
+            status=status.HTTP_201_CREATED,
+            code=20000,
+        )
+
+
 class VerifyEmailView(APIView):
     permission_classes = [permissions.AllowAny]
 
+    @swagger_auto_schema(
+        responses=openapi.verify_email_response,
+        operation_description="Activate user account using email confirmation link",
+    )
     def get(self, request, uidb64, token) -> Response:
         try:
             uid = force_str(urlsafe_base64_decode(uidb64))
@@ -75,6 +102,11 @@ class LoginView(APIView):
     permission_classes = [permissions.AllowAny]
     serializer_class = LoginSerializer
 
+    @swagger_auto_schema(
+        request_body=LoginSerializer,
+        responses=openapi.login_response,
+        operation_description="User login endpoint",
+    )
     def post(self, request: Request):
         serializer = self.serializer_class(data=request.data)
         if not serializer.is_valid():
@@ -96,6 +128,11 @@ class RequestPasswordResetView(APIView):
     def generate_otp(self) -> int:
         return random.randint(100000, 999999)
 
+    @swagger_auto_schema(
+        request_body=openapi.request_email_body,
+        responses=openapi.request_email_response,
+        operation_description="Request a password reset for a user",
+    )
     def post(self, request: Request) -> Response:
         email = request.data.get("email")
         if not email:
@@ -139,6 +176,11 @@ class RequestPasswordResetView(APIView):
 class CheckResetPasswordOTP(APIView):
     permission_classes = [permissions.AllowAny]
 
+    @swagger_auto_schema(
+        request_body=openapi.check_reset_body,
+        responses=openapi.check_reset_response,
+        operation_description="Verify OTP sent to user's email",
+    )
     def post(self, request: Request) -> Response:
         email = request.data.get("email")
         otp = request.data.get("otp")
@@ -176,6 +218,11 @@ class CheckResetPasswordOTP(APIView):
 class ResetPasswordView(APIView):
     permission_classes = [permissions.AllowAny]
 
+    @swagger_auto_schema(
+        request_body=openapi.reset_password_body,
+        responses=openapi.reset_password_response,
+        operation_description="Reset user password using email, OTP and new password",
+    )
     def patch(self, request: Request) -> Response:
         email = request.data.get("email")
         otp = request.data.get("otp")
@@ -224,6 +271,11 @@ class ResetPasswordView(APIView):
 class ChangePasswordView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
+    @swagger_auto_schema(
+        request_body=openapi.change_password_body,
+        responses=openapi.change_password_response,
+        operation_description="Change user password using current password and new password",
+    )
     def patch(self, request: Request) -> Response:
         user = request.user
         old_password = request.data.get("old_password")
