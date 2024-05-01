@@ -7,7 +7,7 @@ ALLOWED_HOSTS = ["*"]
 # CSRF_COOKIE_SECURE = True
 CORS_ALLOW_ALL_ORIGINS = True
 
-CORS_ALLOWED_ORIGINS = ["*"]
+# CORS_ALLOWED_ORIGINS = ["*"]
 
 DATABASES = {
     "default": dj_database_url.parse(config("DB_URL")),
@@ -25,7 +25,7 @@ DATABASES = {
 # }
 
 DEFAULT_FROM_EMAIL = "noreply@regio.com"
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = config("EMAIL_HOST")
 EMAIL_PORT = config("EMAIL_PORT")
 EMAIL_HOST_USER = config("EMAIL_HOST_USER")

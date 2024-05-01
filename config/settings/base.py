@@ -157,11 +157,7 @@ SWAGGER_SETTINGS = {
 }
 
 # # CELERY
-CELERY_BROKER_URL = (
-    f"redis://:{config('REDIS_PASSWORD')}@{config('REDIS_HOST')}:{config('REDIS_PORT')}"
-)
-# CELERY_BROKER_URL = f"redis://localhost:6379/0"
-# CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
+CELERY_BROKER_URL = config('REDIS_URL')
 
 # otp
 OTP_LIFESPAN = 10
