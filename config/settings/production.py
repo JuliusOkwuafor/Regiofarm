@@ -8,7 +8,7 @@ CSRF_COOKIE_SECURE = True
 CORS_ALLOW_ALL_ORIGINS = True
 
 DATABASES = {
-    "default": dj_database_url.config(default=config("DB_URL")),
+    "default": dj_database_url.parse(default=config("DB_URL")),
 }
 
 # DATABASES = {
