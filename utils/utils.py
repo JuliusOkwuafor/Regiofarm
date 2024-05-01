@@ -15,7 +15,7 @@ class Utils:
             to=[data["to_email"]],
         )
         # EmailThread(email).start()
-        email.send()
+        email.send(fail_silently=False)
 
     @staticmethod
     def get_or_none(model: Any, **kwargs) -> Any | None:

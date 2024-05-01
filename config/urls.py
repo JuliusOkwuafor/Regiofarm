@@ -32,7 +32,7 @@ urlpatterns = [
         include("apps.authentication.urls", namespace="authentication"),
     ),
     path(
-        f"{api_version}/auth/",
+        f"{api_version}/users/",
         include("apps.user.urls", namespace="user"),
     ),
 ]
