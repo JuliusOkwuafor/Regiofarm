@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from user.enums import Role
-from user.models import User, SellerProfile
+from user.models import User
+from seller.models import SellerProfile
 from typing import Any
 from drf_yasg import openapi
 

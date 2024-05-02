@@ -32,6 +32,7 @@ DJANGO_APPS = [
 LOCAL_APPS = [
     "user",
     "authentication",
+    "seller",
 ]
 
 THIRD_PARTY_APPS = [
@@ -157,7 +158,7 @@ SWAGGER_SETTINGS = {
 }
 
 # # CELERY
-CELERY_BROKER_URL = config('REDIS_URL')
+CELERY_BROKER_URL = config("REDIS_URL")
 
 # otp
 OTP_LIFESPAN = 10

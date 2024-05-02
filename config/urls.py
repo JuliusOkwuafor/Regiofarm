@@ -28,11 +28,12 @@ urlpatterns = [
     ),
     path("admin/", admin.site.urls),
     path(
-        f"{api_version}/users/",
-        include("apps.user.urls", namespace="user"),
-    ),
-    path(
         f"{api_version}/auth/",
         include("apps.authentication.urls", namespace="authentication"),
     ),
+    path(
+        f"{api_version}/users/",
+        include("apps.user.urls", namespace="user"),
+    ),
+    path(f"{api_version}/sellers/", include("apps.seller.urls", namespace="seller")),
 ]
