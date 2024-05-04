@@ -1,12 +1,12 @@
 from rest_framework import serializers
 from user.enums import Role
-from user.models import User
+from user.models import User, UserAddress
 from seller.models import SellerProfile
 from typing import Any
-from drf_yasg import openapi
 
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from user.validators import password_validator
+from user.serializers import UserAddressSerializer
 
 
 class RegisterUserSerializer(serializers.ModelSerializer):
@@ -34,6 +34,7 @@ class RegisterUserSerializer(serializers.ModelSerializer):
 
 class RegisterSellerSerializer(serializers.ModelSerializer):
     user = RegisterUserSerializer()
+    address = UserAddressSerializer()
 
     class Meta:
         model = SellerProfile
@@ -42,6 +43,8 @@ class RegisterSellerSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user_data = validated_data.pop("user")
         user = User.objects.create_user(**user_data, role=Role.SELLER)
+        address_data = validated_data.pop("address")
+        UserAddress.objects.create(user=user, **address_data)
         seller_profile = SellerProfile.objects.create(user=user, **validated_data)
         return seller_profile
 

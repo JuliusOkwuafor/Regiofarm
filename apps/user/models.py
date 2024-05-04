@@ -56,9 +56,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         ordering = ["-created_at"]
 
 
-
-
-
 class OTP(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="otp"
@@ -84,3 +81,36 @@ class OTP(models.Model):
 
     def __str__(self) -> str:
         return f"{self.user.email} -- OTP: {self.code}"
+
+
+class UserAddress(models.Model):
+    id = models.UUIDField(
+        _("id"), primary_key=True, editable=False, default=uuid.uuid4,
+    )
+    user = models.OneToOneField(
+        User,
+        verbose_name=_("user"),
+        on_delete=models.CASCADE,
+        related_name="address",
+        null=True,
+    )
+    street = models.CharField(_("street"), max_length=50, blank=True, null=True)
+    house_number = models.CharField(
+        _("house number"), max_length=10, blank=True, null=True
+    )
+    postal_code = models.CharField(
+        _("postal code"), max_length=10, blank=True, null=True
+    )
+    city = models.CharField(_("city"), max_length=255, blank=True, null=True)
+    country = models.CharField(_("country"), max_length=255, blank=True, null=True)
+
+    created_at = models.DateTimeField(_("created at"), auto_now_add=True)
+    updated_at = models.DateTimeField(_("updated at"), auto_now=True)
+
+    class Meta:
+        db_table = "users_address"
+        verbose_name = "User Address"
+        verbose_name_plural = "User Addresses"
+
+    def __str__(self) -> str:
+        return f"{self.user.full_name} ({self.city}, {self.country})"

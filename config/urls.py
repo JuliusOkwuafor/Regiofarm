@@ -36,4 +36,5 @@ urlpatterns = [
         include("apps.user.urls", namespace="user"),
     ),
     path(f"{api_version}/sellers/", include("apps.seller.urls", namespace="seller")),
+    path(f"{api_version}/products/", include("product.urls", namespace="product")),
 ]

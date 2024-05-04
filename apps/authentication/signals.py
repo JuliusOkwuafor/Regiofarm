@@ -6,7 +6,7 @@ from .utils import activation_token
 
 from utils.exceptions import EmailNotSendException
 
-from user.models import User, OTP
+from user.models import User, OTP, UserAddress
 from .tasks import (
     send_activation_email as activation_mail,
     send_reset_email as reset_email,
@@ -16,6 +16,8 @@ from .tasks import (
 @receiver(post_save, sender=User)
 def send_activation_email(sender, instance: User, created, **kwargs):
     if created:
+        if instance.role == "user":
+            UserAddress.objects.create(user=instance)
         uid = urlsafe_base64_encode(force_bytes(instance.pk))
         token = activation_token.make_token(instance)
         print("here")

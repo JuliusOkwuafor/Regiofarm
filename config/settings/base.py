@@ -33,6 +33,7 @@ LOCAL_APPS = [
     "user",
     "authentication",
     "seller",
+    "product",
 ]
 
 THIRD_PARTY_APPS = [
@@ -130,7 +131,7 @@ REST_FRAMEWORK = {
     "NON_FIELD_ERRORS_KEY": "error",
     "EXCEPTION_HANDLER": "utils.execption_handler.handle_exception",
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        # "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
 }
