@@ -1,10 +1,13 @@
 from rest_framework import serializers
-from seller.models import SellerProfile
+from seller.models import Seller
+from user.models import User, UserAddress
+from user.enums import Role
 
 
-class SellerProfileSerializer(serializers.ModelSerializer):
+class SellerSerializer(serializers.ModelSerializer):
+
     class Meta:
-        model = SellerProfile
+        model = Seller
         exclude = ["created_at", "updated_at"]
 
     def to_representation(self, instance):

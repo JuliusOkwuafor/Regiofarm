@@ -16,13 +16,14 @@ from .tasks import (
 @receiver(post_save, sender=User)
 def send_activation_email(sender, instance: User, created, **kwargs):
     if created:
+        print(sender.is_verified)
         if instance.role == "user":
             UserAddress.objects.create(user=instance)
         uid = urlsafe_base64_encode(force_bytes(instance.pk))
         token = activation_token.make_token(instance)
         print("here")
         try:
-            activation_mail.delay(
+            activation_mail(
                 instance.email,
                 instance.firstname,
                 uid,

@@ -14,11 +14,11 @@ from utils.utils import Utils
 
 from .serializers import (
     LoginSerializer,
-    RegisterSellerSerializer,
-    RegisterUserSerializer,
+    RegisterUserSerializer,RegisterSellerSerializer
 )
 from .utils import activation_token
 from . import openapi
+# from seller.serializers import SellerSerializer
 
 
 class RegisterUserView(APIView):

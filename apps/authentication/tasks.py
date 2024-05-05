@@ -10,6 +10,7 @@ from utils.utils import Utils
 
 @shared_task
 def send_activation_email(email, firstname, uid, token):
+    print('here x2')
     data = {
         "to_email": email,
         "email_subject": "Activate your account",
