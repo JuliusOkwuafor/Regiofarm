@@ -69,7 +69,7 @@ class Product(models.Model):
         _("percentage discount"),
         max_digits=5,
         decimal_places=2,
-        validators=[MinValueValidator(0), MaxValueValidator(100)],
+        validators=[MinValueValidator(0.00), MaxValueValidator(100)],
         default=0,
     )
 

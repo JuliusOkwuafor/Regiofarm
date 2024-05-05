@@ -18,3 +18,19 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def get_new_price(self, obj):
         return obj.new_price()
+
+    def to_representation(self, instance):
+        dt = super().to_representation(instance)
+        data = {
+            "code": 20000,
+            "message": "successful",
+            "data": dt,
+        }
+        print("jj")
+        return data
+
+
+class FavouriteProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FavoriteProduct
+        fields = ["product"]
