@@ -4,7 +4,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from user.models import User
-from seller.models import Seller
+# from seller.models import Seller
 
 # Create your models here.
 
@@ -32,7 +32,7 @@ class Product(models.Model):
         db_index=True,
     )
     seller = models.ForeignKey(
-        Seller,
+        "seller.Seller",
         verbose_name=_("seller"),
         related_name="products",
         on_delete=models.CASCADE,

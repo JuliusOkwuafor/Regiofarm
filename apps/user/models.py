@@ -116,9 +116,9 @@ class UserAddress(models.Model):
     updated_at = models.DateTimeField(_("updated at"), auto_now=True)
 
     class Meta:
-        db_table = "users_address"
-        verbose_name = "User Address"
-        verbose_name_plural = "User Addresses"
+        db_table = "user_address"
+        verbose_name = _("User Address")
+        verbose_name_plural = _("User Addresses")
 
     def __str__(self) -> str:
         return f"{self.user.full_name} ({self.city}, {self.country})"

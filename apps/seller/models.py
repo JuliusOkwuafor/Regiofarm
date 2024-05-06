@@ -4,6 +4,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from user.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
+from product.models import Product
 
 # Create your models here.
 
@@ -94,7 +95,7 @@ class Seller(models.Model):
         null=True,
         max_digits=4,
         decimal_places=2,
-        validators=[MaxValueValidator(0.01), MaxValueValidator(100.00)],
+        validators=[MinValueValidator(0.00), MaxValueValidator(100.00)],
     )
 
     created_at = models.DateTimeField(_("created at"), auto_now_add=True)
@@ -108,7 +109,7 @@ class Seller(models.Model):
 
     def save(self, *args, **kwargs):
         if self.product_discount and self.product_discount > 0:
-            for product in self.seller:
+            for product in Product.objects.filter(seller=self):
                 product.discount = self.product_discount
                 product.save()
         super().save(*args, **kwargs)
