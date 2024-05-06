@@ -38,7 +38,7 @@ class RegisterSellerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Seller
-        exclude = ["id", "created_at", "updated_at"]
+        fields = ["user", "name", "ceo", "vat", "address"]
 
     def create(self, validated_data):
         user_data = validated_data.pop("user")
