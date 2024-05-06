@@ -18,6 +18,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     firstname = models.CharField(_("first name"), max_length=150)
     lastname = models.CharField(_("last name"), max_length=150)
     photo = models.ImageField(_("Photo"), upload_to="photos/", blank=True, null=True)
+    language = models.CharField(_("language"), max_length=50)
+    currency = models.CharField(_("currency"), max_length=10)
 
     is_active = models.BooleanField(_("active"), default=True)
     is_verified = models.BooleanField(_("verified"), default=False)
@@ -40,6 +42,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def tokens(self):
         refresh = RefreshToken.for_user(self)
+        refresh["role"] = self.role
+        refresh["language"] = self.language
+        refresh["currency"] = self.currency
         return {
             "refresh": str(refresh),
             "access": str(refresh.access_token),
@@ -85,7 +90,10 @@ class OTP(models.Model):
 
 class UserAddress(models.Model):
     id = models.UUIDField(
-        _("id"), primary_key=True, editable=False, default=uuid.uuid4,
+        _("id"),
+        primary_key=True,
+        editable=False,
+        default=uuid.uuid4,
     )
     user = models.OneToOneField(
         User,
