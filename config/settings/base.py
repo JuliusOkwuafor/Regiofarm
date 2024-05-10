@@ -34,6 +34,8 @@ LOCAL_APPS = [
     "authentication",
     "seller",
     "product",
+    'post',
+    "common",
 ]
 
 THIRD_PARTY_APPS = [

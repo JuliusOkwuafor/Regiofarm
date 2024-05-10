@@ -114,5 +114,9 @@ class Seller(models.Model):
                 product.save()
         super().save(*args, **kwargs)
 
+    @property
+    def is_open(self):
+        pass
+
     def __str__(self):
         return self.name

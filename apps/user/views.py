@@ -1,14 +1,15 @@
-from rest_framework.views import APIView
-from utils.permissions import IsUserORAdmin
-from rest_framework import generics
-from rest_framework.response import Response
+from common.models import Favorite
+from common.serializers import FavoriteSerializer
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework import generics, permissions, status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from user.models import User, UserAddress
 
-# Create your views here.
+from utils.permissions import IsUserORAdmin
 from utils.response import APIResponse
 
-from .serializers import UserSerializer, UserAddressSerializer
-from user.models import User, UserAddress
+from .serializers import UserAddressSerializer, UserSerializer
 
 
 class UserView(generics.RetrieveUpdateDestroyAPIView):
@@ -43,3 +44,20 @@ class UserAddressView(generics.RetrieveUpdateDestroyAPIView):
     # @swagger_auto_schema(operation_summary="")
     # def perform_update(self, serializer):
     #     return super().perform_update(serializer)
+
+
+class UserFavouriteView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = FavoriteSerializer
+
+    def get(self, request):
+        favourite = Favorite.objects.filter(user=request.user)
+        serializer = self.serializer_class(favourite, many=True)
+        # data = serializer.data
+        
+        return APIResponse(
+            data=serializer.data,
+            status=status.HTTP_200_OK,
+            msg="favourite fetched successfully",
+            code=20000,
+        )
