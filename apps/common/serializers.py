@@ -15,29 +15,36 @@ class FavoriteSerializer(serializers.ModelSerializer):
         model_class = content_type.model_class()
         obj_ = model_class.objects.get(pk=obj.object_id)
         if model_class == Product:
-            # model_class:Product
+            # model_class: Product
             data = {
-                
+                "id": obj_.id,
+                "name": obj_.name,
+                "seller_name": obj_.seller_name(),
+                "quantity": obj_.quantity,
+                "unit": obj_.quantity_unit,
+                "price": obj_.price,
+                "currency": obj_.currency,
+                "total_left": obj_.total_quantity,
             }
         elif model_class == Seller:
-            # model_class:Seller
+            model_class: Seller
             data = {
-                "name": f"{obj_.user.firstname} {obj_.user.lastname}",
-                "category": obj_.category,
+                "name": obj_.user.full_name,
+                "category": obj_.category.name,
                 "city": obj_.user.address.city,
-                "total_likes": "total likes",
+                "total_likes": obj_.total_likes(),
                 "latitude": obj_.latitude,
                 "longitude": obj_.longitude,
-                "is_opened": obj_.is_open(),
+                "is_opened": obj_.is_open,
             }
         elif model_class == Post:
-            model_class:Post
+            # model_class:Post
             data = {
                 "headline": obj_.headline,
                 "content": obj_.content,
                 "link": obj_.link,
                 "total_views": obj_.total_views,
-                "total_likes": obj_.total_likes,
+                "total_likes": obj_.total_likes(),
                 "created_at": obj_.created_at,
             }
         else:

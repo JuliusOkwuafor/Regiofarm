@@ -4,6 +4,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from user.models import User
+
 # from seller.models import Seller
 
 # Create your models here.
@@ -85,6 +86,20 @@ class Product(models.Model):
     @property
     def new_price(self) -> float:
         return self.price - (self.price * self.discount / 100)
+
+    @property
+    def seller_name(self):
+        return self.seller.user.full_name()
+
+    @property
+    def state(self):
+        liquid_units = ["l", "ml"]
+        solid_units = ["kg", "g"]
+        if self.quantity_unit in liquid_units:
+            return "liquid"
+        elif self.quantity_unit in solid_units:
+            return "solid"
+        return "pcs"
 
     def __str__(self) -> str:
         return self.name

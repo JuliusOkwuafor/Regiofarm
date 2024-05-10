@@ -1,10 +1,12 @@
 import uuid
+from datetime import datetime, time, timezone
 
+from common.models import Favorite
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from user.models import User
-from django.core.validators import MinValueValidator, MaxValueValidator
 from product.models import Product
+from user.models import User
 
 # Create your models here.
 
@@ -116,7 +118,13 @@ class Seller(models.Model):
 
     @property
     def is_open(self):
-        pass
+        now = datetime.now(timezone.utc).time()
+        if self.opening_hour and self.closing_hour:
+            return self.opening_hour <= now <= self.closing_hour
+        return False
+
+    def total_likes(self):
+        return Favorite.objects.filter(object_id=self.pk).count()
 
     def __str__(self):
         return self.name

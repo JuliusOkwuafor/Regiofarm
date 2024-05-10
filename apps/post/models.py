@@ -68,7 +68,7 @@ class PostView(models.Model):
     user = models.ForeignKey(
         "user.User",
         verbose_name=_("user"),
-        on_delete=models.SET_NULL,
+        on_delete=models.DO_NOTHING,
         related_name="post_view",
     )
     post = models.ForeignKey(

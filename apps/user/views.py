@@ -2,8 +2,7 @@ from common.models import Favorite
 from common.serializers import FavoriteSerializer
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import generics, permissions, status
-from rest_framework.response import Response
-from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
 from user.models import User, UserAddress
 
 from utils.permissions import IsUserORAdmin
@@ -46,18 +45,26 @@ class UserAddressView(generics.RetrieveUpdateDestroyAPIView):
     #     return super().perform_update(serializer)
 
 
-class UserFavouriteView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-    serializer_class = FavoriteSerializer
+# class UserFavoriteView(APIView):
+#     permission_classes = [permissions.IsAuthenticated]
+#     serializer_class = FavoriteSerializer
 
-    def get(self, request):
-        favourite = Favorite.objects.filter(user=request.user)
-        serializer = self.serializer_class(favourite, many=True)
-        # data = serializer.data
-        
-        return APIResponse(
-            data=serializer.data,
-            status=status.HTTP_200_OK,
-            msg="favourite fetched successfully",
-            code=20000,
-        )
+#     def get(self, request):
+#         favourite = Favorite.objects.filter(user=request.user)
+#         serializer = self.serializer_class(favourite, many=True)
+#         # data = serializer.data
+
+#         return APIResponse(
+#             data=serializer.data,
+#             status=status.HTTP_200_OK,
+#             msg="favourite fetched successfully",
+#             code=20000,
+#         )
+
+
+class UserFavoriteListView(ListAPIView):
+    serializer_class = FavoriteSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Favorite.objects.filter(user=self.request.user)

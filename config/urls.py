@@ -38,4 +38,5 @@ urlpatterns = [
     path(f"{api_version}/sellers/", include("apps.seller.urls", namespace="seller")),
     path(f"{api_version}/products/", include("product.urls", namespace="product")),
     path(f"{api_version}/posts/", include("post.urls", namespace="post")),
+    # path(f"{api_version}/", include("common.urls", namespace="common")),
 ]
