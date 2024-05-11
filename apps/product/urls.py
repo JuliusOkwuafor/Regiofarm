@@ -1,10 +1,12 @@
 from django.urls import path
+
 from .views import (
-    ProductListCreateView,
+    FavouriteProductCreateView,
     ProductDetailView,
     ProductImageCreateView,
     ProductImageDeleteView,
-    FavouriteProductView,
+    ProductListCreateView,
+    FavouriteProductDeleteView,
 )
 
 app_name = "product"
@@ -23,7 +25,14 @@ urlpatterns = [
         name="product_image_delete",
     ),
     path(
-        "<uuid:pk>/favourite/", FavouriteProductView.as_view(), name="favourite_produce"
+        "favorite/create",
+        FavouriteProductCreateView.as_view(),
+        name="favorite_product",
+    ),
+    path(
+        "favorite/delete/<int:pk>/",
+        FavouriteProductDeleteView.as_view(),
+        name="unfavorite_product",
     ),
     # path('', ProductListAPIView.as_view(), name='list'),
     # path('<uuid:pk>/', ProductDetailAPIView.as_view(), name='detail'),

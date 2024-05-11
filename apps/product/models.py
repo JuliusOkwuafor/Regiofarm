@@ -4,6 +4,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from user.models import User
+from common.models import Favorite
 
 # from seller.models import Seller
 
@@ -89,7 +90,8 @@ class Product(models.Model):
 
     @property
     def seller_name(self):
-        return self.seller.user.full_name()
+        return self.seller.user.full_name
+    
 
     @property
     def state(self):

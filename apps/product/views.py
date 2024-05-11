@@ -1,20 +1,26 @@
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import (
+    ListCreateAPIView,
+    RetrieveUpdateDestroyAPIView,
+    CreateAPIView,
+    DestroyAPIView,
+)
 from rest_framework.views import APIView
 
 from utils.permissions import IsSellerORRead
 from utils.paginations import APIPagination
 
 from .models import Product, ProductImage
-from .serializers import (
-    ProductImageSerializer,
-    ProductSerializer,
-    FavouriteProductSerializer,
-)
+from .serializers import ProductImageSerializer, ProductSerializer
 from django.shortcuts import get_object_or_404
 from utils.response import APIResponse
 from rest_framework import status, permissions
 from rest_framework.request import Request
 from .models import FavoriteProduct
+from common.serializers import FavoriteSerializer
+from common.models import Favorite
+from rest_framework.response import Response
+from django.contrib.contenttypes.models import ContentType
+from common.views import FavoriteUtils
 
 # Create your views here.
 
@@ -73,48 +79,34 @@ class ProductImageDeleteView(APIView):
         )
 
 
-class FavouriteProductView(APIView):
+class FavouriteProductCreateView(CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
-    serializer_class = FavouriteProductSerializer
+    serializer_class = FavoriteSerializer
 
-    def post(self, request: Request, pk):
-        product = get_object_or_404(Product, pk=pk)
-        serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid():
-            serializer.save(user=request.user, product=product)
-            return APIResponse(
-                data=serializer.data,
-                status=status.HTTP_201_CREATED,
-                code=20000,
-                msg="product successfully added to favourite",
-            )
-        return APIResponse(
-            msg="error adding product to favourite", status=status.HTTP_400_BAD_REQUEST
+    def get_queryset(self):
+        return Favorite.objects.filter(user=self.request.user)
+
+    def post(self, request: Request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        content_type_data = "product.product"
+        object_id = request.data.get("object_id")
+
+        return FavoriteUtils.create_favorite(
+            self,
+            user=request.user,
+            content_type_data=content_type_data,
+            object_id=object_id,
         )
 
-    def delete(self, request, pk):
-        product = get_object_or_404(Product, pk=pk)
-        favourite = get_object_or_404(
-            FavoriteProduct, user=request.user, product=product
-        )
-        favourite.delete()
-        return APIResponse(
-            msg="product successfully deleted from favourite",
-            status=status.HTTP_204_NO_CONTENT,
-            code=20000,
-        )
 
-    def get_permissions(self):
-        if self.request.method == "GET":
-            self.permission_classes = [IsSellerORRead]
-        return super().get_permissions()
+class FavouriteProductDeleteView(DestroyAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = FavoriteSerializer
 
-    def get(self, request, pk):
-        product = get_object_or_404(FavoriteProduct, product__pk=pk)
-        serializer = self.serializer_class(product, many=True)
-        return APIResponse(
-            data=serializer.data,
-            status=status.HTTP_200_OK,
-            code=20000,
-            msg="favourite product list",
-        )
+    def get_queryset(self):
+        return Favorite.objects.filter(user=self.request.user)
+
+    def delete(self, request, pk, *args, **kwargs):
+        return FavoriteUtils.delete_favorite(pk=pk, user=request.user)

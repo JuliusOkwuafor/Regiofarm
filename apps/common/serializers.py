@@ -3,11 +3,14 @@ from .models import Favorite
 from seller.models import Seller
 from product.models import Product
 from post.models import Post
+from django.shortcuts import get_object_or_404
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
-    content_type = serializers.CharField()
-    object_id = serializers.IntegerField(write_only=True)
+    content_type = serializers.CharField(
+        read_only=True
+    )  # Get content type as string representation
+    object_id = serializers.UUIDField(read_only=True)
     content_object = serializers.SerializerMethodField()
 
     def get_content_object(self, obj):
@@ -19,7 +22,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
             data = {
                 "id": obj_.id,
                 "name": obj_.name,
-                "seller_name": obj_.seller_name(),
+                "seller_name": obj_.seller_name,
                 "quantity": obj_.quantity,
                 "unit": obj_.quantity_unit,
                 "price": obj_.price,
@@ -54,5 +57,11 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Favorite
-        fields = ["user", "content_type", "object_id", "content_object"]
-        extra_kwargs = {"content_object": {"read_only": True}}
+        fields = ["id", "user", "content_type", "object_id", "content_object"]
+        extra_kwargs = {
+            "id": {"read_only": True},
+            "content_object": {"read_only": True},
+            "user": {"read_only": True},
+            "content_type": {"read_only": True},
+            "object_id": {"read_only": True},
+        }
