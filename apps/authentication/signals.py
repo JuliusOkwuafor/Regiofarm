@@ -23,7 +23,7 @@ def send_activation_email(sender, instance: User, created, **kwargs):
         token = activation_token.make_token(instance)
         print("here")
         try:
-            activation_mail(
+            activation_mail.delay(
                 instance.email,
                 instance.firstname,
                 uid,
@@ -31,7 +31,7 @@ def send_activation_email(sender, instance: User, created, **kwargs):
             )
         except EmailNotSendException as e:
             # TODO: Log the error and handle it properly
-            print("Email not sent due to {}".format(e.__cause__))
+            print("Email not sent due to {}".format(e.full_message))
 
 
 @receiver(post_save, sender=OTP)

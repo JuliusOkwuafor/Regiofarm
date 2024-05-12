@@ -5,9 +5,7 @@ from decouple import config
 from django.conf import settings
 
 setting: str = (
-    os.getenv("DJANGO_SETTINGS_MODULE", "config.settings.development")
-    if config("DEBUG", cast=bool)
-    else "config.settings.production"
+    "config.settings.development" if config("DEBUG") else "config.settings.production"
 )
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", setting)
