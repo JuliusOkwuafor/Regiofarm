@@ -8,7 +8,7 @@ class SellerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Seller
-        exclude = ["created_at", "updated_at"]
+        exclude = ["created_at", "updated_at",'is_active','is_subscribed']
 
     def to_representation(self, instance):
         dt = super().to_representation(instance)

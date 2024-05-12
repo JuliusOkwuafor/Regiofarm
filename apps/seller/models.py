@@ -7,6 +7,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from product.models import Product
 from user.models import User
+from .managers import SellerManager, SellerVerifiedManager
 
 # Create your models here.
 
@@ -99,9 +100,14 @@ class Seller(models.Model):
         decimal_places=2,
         validators=[MinValueValidator(0.00), MaxValueValidator(100.00)],
     )
+    is_active = models.BooleanField(_("is active"), default=True)
+    is_subscribed = models.BooleanField(_("is subscribed"), default=False)
 
     created_at = models.DateTimeField(_("created at"), auto_now_add=True)
     updated_at = models.DateTimeField(_("updated at"), auto_now=True)
+
+    is_verified = SellerVerifiedManager()
+    objects = SellerManager()
 
     class Meta:
         db_table = "seller"

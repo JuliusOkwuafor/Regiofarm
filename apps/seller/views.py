@@ -1,10 +1,12 @@
-from rest_framework import generics, permissions
-from .serializers import SellerSerializer
-from seller.models import Seller
-from utils.permissions import IsUserORAdmin
-from common.serializers import FavoriteSerializer
 from common.models import Favorite
+from common.serializers import FavoriteSerializer
 from common.views import FavoriteUtils
+from rest_framework import generics, permissions
+from seller.models import Seller
+
+from utils.permissions import IsSellerORRead
+
+from .serializers import SellerSerializer
 
 # Create your views here.
 
@@ -13,7 +15,17 @@ class SellerView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = SellerSerializer
     queryset = Seller.objects.all()
     lookup_field = "pk"
-    permission_classes = [IsUserORAdmin]
+    permission_classes = [IsSellerORRead]
+
+    def get_queryset(self):
+
+        return super().get_queryset()
+
+
+class SellerListView(generics.ListAPIView):
+    serializer_class = SellerSerializer
+    queryset = Seller.is_verified.all()
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class FavouriteSellerCreateView(generics.CreateAPIView):

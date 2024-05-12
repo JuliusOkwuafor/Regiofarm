@@ -1,10 +1,16 @@
 from django.urls import path
 
-from .views import FavouriteSellerCreateView, FavouriteSellerDeleteView, SellerView
+from .views import (
+    FavouriteSellerCreateView,
+    FavouriteSellerDeleteView,
+    SellerListView,
+    SellerView,
+)
 
 app_name = "seller"
 
 urlpatterns = [
+    path("", SellerListView.as_view(), name="seller"),
     path("<uuid:pk>/", SellerView.as_view(), name="seller"),
     path(
         "favorite/create",
