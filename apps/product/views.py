@@ -1,26 +1,25 @@
+from common.models import Favorite
+from common.serializers import FavoriteSerializer
+from common.views import FavoriteUtils
+from django.contrib.contenttypes.models import ContentType
+from django.shortcuts import get_object_or_404
+from rest_framework import permissions, status
 from rest_framework.generics import (
-    ListCreateAPIView,
-    RetrieveUpdateDestroyAPIView,
     CreateAPIView,
     DestroyAPIView,
+    ListCreateAPIView,
+    RetrieveUpdateDestroyAPIView,
 )
+from rest_framework.request import Request
+from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from utils.permissions import IsSellerORRead
 from utils.paginations import APIPagination
-
-from .models import Product, ProductImage
-from .serializers import ProductImageSerializer, ProductSerializer
-from django.shortcuts import get_object_or_404
+from utils.permissions import IsSellerORRead
 from utils.response import APIResponse
-from rest_framework import status, permissions
-from rest_framework.request import Request
-from .models import FavoriteProduct
-from common.serializers import FavoriteSerializer
-from common.models import Favorite
-from rest_framework.response import Response
-from django.contrib.contenttypes.models import ContentType
-from common.views import FavoriteUtils
+
+from .models import FavoriteProduct, Product, ProductImage
+from .serializers import ProductImageSerializer, ProductSerializer
 
 # Create your views here.
 
@@ -102,11 +101,11 @@ class FavouriteProductCreateView(CreateAPIView):
 
 
 class FavouriteProductDeleteView(DestroyAPIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsSellerORRead]
     serializer_class = FavoriteSerializer
 
     def get_queryset(self):
-        return Favorite.objects.filter(user=self.request.user)
+        return Favorite.objects.all()
 
     def delete(self, request, pk, *args, **kwargs):
         return FavoriteUtils.delete_favorite(pk=pk, user=request.user)

@@ -11,9 +11,10 @@ from post.serializers import PostSerializer
 from product.models import Product
 from product.serializers import ProductSerializer
 from rest_framework import generics, permissions
+from rest_framework.filters import SearchFilter
 from rest_framework.request import Request
 from seller.models import Seller
-from rest_framework.filters import SearchFilter
+
 from utils.paginations import APIPagination
 from utils.permissions import IsSellerORRead
 
@@ -95,11 +96,10 @@ class FavouriteSellerCreateView(generics.CreateAPIView):
 
 
 class FavouriteSellerDeleteView(generics.DestroyAPIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsSellerORRead]
     serializer_class = FavoriteSerializer
+    queryset = Favorite.objects.all()
 
-    def get_queryset(self):
-        return Favorite.objects.filter(user=self.request.user)
 
     def delete(self, request, pk, *args, **kwargs):
         return FavoriteUtils.delete_favorite(pk=pk, user=request.user)
@@ -109,17 +109,19 @@ class SellersProductListView(generics.ListAPIView):
     serializer_class = ProductSerializer
     permission_classes = [permissions.IsAuthenticated]
     pagination_class = APIPagination
+    lookup_field = "pk"
 
     def get_queryset(self):
-        seller = Seller.is_verified.filter(pk=self.kwargs["pk"])
-        return Product.objects.filter(is_active=True, seller=seller)
+        seller_id = self.kwargs.get(self.lookup_field)
+        return Product.objects.filter(is_active=True, seller__id=seller_id)
 
 
 class SellersPostListView(generics.ListAPIView):
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticated]
     pagination_class = APIPagination
+    lookup_field = "pk"
 
     def get_queryset(self):
-        seller = Seller.is_verified.filter(pk=self.kwargs["pk"])
-        return Post.objects.filter(seller=seller)
+        seller_id = self.kwargs.get(self.lookup_field)
+        return Post.objects.filter(author__id=seller_id)

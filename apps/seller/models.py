@@ -1,3 +1,4 @@
+from decimal import Decimal
 import uuid
 from datetime import datetime, time, timezone
 
@@ -80,7 +81,7 @@ class Seller(models.Model):
         null=True,
         max_digits=10,
         decimal_places=2,
-        validators=[MinValueValidator(0.01)],
+        validators=[MinValueValidator(Decimal(0.01))],
     )
     delivery_terms_distance = models.DecimalField(
         _("delivery distance"), blank=True, null=True, max_digits=10, decimal_places=1
@@ -98,7 +99,10 @@ class Seller(models.Model):
         null=True,
         max_digits=4,
         decimal_places=2,
-        validators=[MinValueValidator(0.00), MaxValueValidator(100.00)],
+        validators=[
+            MinValueValidator(Decimal(0.00)),
+            MaxValueValidator(Decimal(100.00)),
+        ],
     )
     is_active = models.BooleanField(_("is active"), default=True)
     is_subscribed = models.BooleanField(_("is subscribed"), default=False)

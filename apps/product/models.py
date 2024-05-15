@@ -1,3 +1,4 @@
+from decimal import Decimal
 import uuid
 
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -51,27 +52,30 @@ class Product(models.Model):
         _("price"),
         max_digits=10,
         decimal_places=2,
-        validators=[MinValueValidator(0.01)],
+        validators=[MinValueValidator(Decimal(0.01))],
     )
     currency = models.CharField(_("currency"), max_length=50)
     quantity = models.DecimalField(
         _("quantity"),
         max_digits=10,
         decimal_places=2,
-        validators=[MinValueValidator(0.01)],
+        validators=[MinValueValidator(Decimal(0.01))],
     )
     quantity_unit = models.CharField(_("unit"), max_length=50)
     total_quantity = models.DecimalField(
         _("quantity"),
         max_digits=10,
         decimal_places=2,
-        validators=[MinValueValidator(0.01)],
+        validators=[MinValueValidator(Decimal(0.01))],
     )
     discount = models.DecimalField(
         _("percentage discount"),
         max_digits=5,
         decimal_places=2,
-        validators=[MinValueValidator(0.00), MaxValueValidator(100.00)],
+        validators=[
+            MinValueValidator(Decimal(0.00)),
+            MaxValueValidator(Decimal(100.00)),
+        ],
         default=0,
     )
 

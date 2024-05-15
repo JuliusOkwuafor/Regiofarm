@@ -17,6 +17,7 @@ from utils.paginations import APIPagination
 
 from .models import Post, PostView
 from .serializers import PostSerializer
+from utils.permissions import IsSellerORRead
 
 
 class PostListView(ListAPIView):
@@ -69,11 +70,12 @@ class FavouritePostCreateView(CreateAPIView):
 
 
 class FavouritePostDeleteView(DestroyAPIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated,IsSellerORRead]
     serializer_class = FavoriteSerializer
+    queryset = Favorite.objects.all()
 
-    def get_queryset(self):
-        return Favorite.objects.filter(user=self.request.user)
+    # def get_queryset(self):
+    #     return 
 
     def delete(self, request, pk, *args, **kwargs):
         return FavoriteUtils.delete_favorite(pk=pk, user=request.user)
