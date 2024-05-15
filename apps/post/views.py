@@ -1,18 +1,31 @@
-from rest_framework.generics import ListAPIView, RetrieveUpdateDestroyAPIView,CreateAPIView,DestroyAPIView
-from rest_framework import permissions
+from typing import Any
 
 from common.models import Favorite
-from .serializers import PostSerializer
-from .models import Post, PostView
-from typing import Any
 from common.serializers import FavoriteSerializer
 from common.views import FavoriteUtils
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import permissions
+from rest_framework.filters import SearchFilter
+from rest_framework.generics import (
+    CreateAPIView,
+    DestroyAPIView,
+    ListAPIView,
+    RetrieveUpdateDestroyAPIView,
+)
+
+from utils.paginations import APIPagination
+
+from .models import Post, PostView
+from .serializers import PostSerializer
 
 
 class PostListView(ListAPIView):
     authentication_classes = [permissions.IsAuthenticated]
     serializer_class = PostSerializer
     queryset = Post.objects.all()
+    pagination_class = APIPagination
+    filter_backends = [SearchFilter]
+    search_fields = ["headline", "author"]
 
     def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
@@ -31,6 +44,7 @@ class PostDetailView(RetrieveUpdateDestroyAPIView):
         if request.user.is_authenticated:
             PostView.objects.get_or_create(user=request.user, post=instance)
         return super().retrieve(request, *args, **kwargs)
+
 
 class FavouritePostCreateView(CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
