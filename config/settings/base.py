@@ -34,7 +34,7 @@ LOCAL_APPS = [
     "authentication",
     "seller",
     "product",
-    'post',
+    "post",
     "common",
 ]
 
@@ -42,6 +42,8 @@ THIRD_PARTY_APPS = [
     "rest_framework",
     "drf_yasg",
     "corsheaders",
+    "django_filters",
+    "django_property_filter",
 ]
 
 INSTALLED_APPS = LOCAL_APPS + THIRD_PARTY_APPS + DJANGO_APPS

@@ -91,7 +91,6 @@ class Product(models.Model):
     @property
     def seller_name(self):
         return self.seller.user.full_name
-    
 
     @property
     def state(self):

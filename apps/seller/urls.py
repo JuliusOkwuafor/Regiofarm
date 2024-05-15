@@ -5,6 +5,8 @@ from .views import (
     FavouriteSellerDeleteView,
     SellerListView,
     SellerView,
+    SellersProductListView,
+    SellersPostListView,
 )
 
 app_name = "seller"
@@ -21,5 +23,11 @@ urlpatterns = [
         "favorite/delete/<int:pk>/",
         FavouriteSellerDeleteView.as_view(),
         name="unfavorite_post",
+    ),
+    path(
+        "<uuid:pk>/products", SellersProductListView.as_view(), name="seller_products"
+    ),
+    path(
+        "<uuid:pk>/posts", SellersPostListView.as_view(), name="seller_products"
     ),
 ]

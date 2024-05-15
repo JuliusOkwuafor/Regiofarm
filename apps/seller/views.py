@@ -1,9 +1,20 @@
+from datetime import datetime, timezone
+
 from common.models import Favorite
 from common.serializers import FavoriteSerializer
 from common.views import FavoriteUtils
+from django_filters.rest_framework import DjangoFilterBackend
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+from post.models import Post
+from post.serializers import PostSerializer
+from product.models import Product
+from product.serializers import ProductSerializer
 from rest_framework import generics, permissions
+from rest_framework.request import Request
 from seller.models import Seller
-
+from rest_framework.filters import SearchFilter
+from utils.paginations import APIPagination
 from utils.permissions import IsSellerORRead
 
 from .serializers import SellerSerializer
@@ -17,15 +28,48 @@ class SellerView(generics.RetrieveUpdateDestroyAPIView):
     lookup_field = "pk"
     permission_classes = [IsSellerORRead]
 
-    def get_queryset(self):
+    # def get_queryset(self):
 
-        return super().get_queryset()
+    #     return super().get_queryset()
 
 
 class SellerListView(generics.ListAPIView):
     serializer_class = SellerSerializer
     queryset = Seller.is_verified.all()
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    filterset_fields = ["category"]
+    pagination_class = APIPagination
+    search_fields = ["name", "user__firstname", "user__lastname", "user__address__city"]
+    # schema=''
+
+    def get_queryset(self):
+        is_open = self.request.query_params.get("is_open")
+        if is_open:
+            now = datetime.now(tz=timezone.utc)
+            if is_open == "opened":
+                return Seller.is_verified.filter(
+                    opening_hour__lte=now, closing_hour__gte=now
+                )
+            elif is_open == "closed":
+                return Seller.is_verified.exclude(
+                    opening_hour__lte=now, closing_hour__gte=now
+                )
+        return super().get_queryset()
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="is_open",
+                enum=["opened", "closed"],
+                in_=openapi.IN_QUERY,
+                description="List all sellers",
+                type=openapi.TYPE_STRING,
+            )
+        ],
+    )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
 
 
 class FavouriteSellerCreateView(generics.CreateAPIView):
@@ -59,3 +103,23 @@ class FavouriteSellerDeleteView(generics.DestroyAPIView):
 
     def delete(self, request, pk, *args, **kwargs):
         return FavoriteUtils.delete_favorite(pk=pk, user=request.user)
+
+
+class SellersProductListView(generics.ListAPIView):
+    serializer_class = ProductSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    pagination_class = APIPagination
+
+    def get_queryset(self):
+        seller = Seller.is_verified.filter(pk=self.kwargs["pk"])
+        return Product.objects.filter(is_active=True, seller=seller)
+
+
+class SellersPostListView(generics.ListAPIView):
+    serializer_class = PostSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    pagination_class = APIPagination
+
+    def get_queryset(self):
+        seller = Seller.is_verified.filter(pk=self.kwargs["pk"])
+        return Post.objects.filter(seller=seller)
