@@ -1,7 +1,7 @@
 from .base import *
 import dj_database_url
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["regio-backend.onrender.com"]
 
 # SECURE_SSL_REDIRECT = True
 # CSRF_COOKIE_SECURE = True
