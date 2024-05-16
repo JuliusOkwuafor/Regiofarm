@@ -1,7 +1,7 @@
 import os
 
 from .base import *
-
+ALLOWED_HOSTS = ["regio-backend.onrender.com"]
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
