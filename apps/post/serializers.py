@@ -11,26 +11,26 @@ class PostImageSerializer(serializers.ModelSerializer):
 
 class PostSerializer(serializers.ModelSerializer):
     images = PostImageSerializer(many=True, read_only=True)
-    # total_views = serializers.SerializerMethodField(read_only=True)
-    # total_likes = serializers.SerializerMethodField(read_only=True)
-    # author_name = serializers.SerializerMethodField(read_only=True)
-    # author_city = serializers.SerializerMethodField(read_only=True)
+    total_views = serializers.SerializerMethodField(read_only=True)
+    total_likes = serializers.SerializerMethodField(read_only=True)
+    author_name = serializers.SerializerMethodField(read_only=True)
+    author_city = serializers.SerializerMethodField(read_only=True)
     upload_images = serializers.ListField(
         child=serializers.ImageField(allow_empty_file=False, use_url=True),
         write_only=True,
     )
 
-    # def get_total_views(self, instance: Post) -> int:
-    #     return instance.total_views
+    def get_total_views(self, instance: Post) -> int:
+        return instance.total_views
 
-    # def get_total_likes(self, instance: Post) -> int:
-    #     return instance.total_likes
+    def get_total_likes(self, instance: Post) -> int:
+        return instance.total_likes
 
-    # def get_author_name(self, instance: Post) -> str:
-    #     return instance.author_name()
+    def get_author_name(self, instance: Post) -> str:
+        return instance.author_name
 
-    # def get_author_city(self, instance: Post) -> str:
-    #     return instance.author_city()
+    def get_author_city(self, instance: Post) -> str:
+        return instance.author_city
 
     def create(self, validated_data):
         images = validated_data.pop("upload_images")
@@ -48,10 +48,10 @@ class PostSerializer(serializers.ModelSerializer):
             "headline",
             "content",
             "link",
-            # "author_name",
-            # "author_city",
-            # "total_views",
-            # "total_likes",
+            "author_name",
+            "author_city",
+            "total_views",
+            "total_likes",
             "images",
             "created_at",
             "upload_images",

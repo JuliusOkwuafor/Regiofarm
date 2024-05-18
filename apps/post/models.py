@@ -39,7 +39,7 @@ class Post(models.Model):
 
     @property
     def total_views(self) -> int:
-        return self.post.count()
+        return self.post_view.count()
 
     @property
     def total_likes(self):
@@ -48,10 +48,12 @@ class Post(models.Model):
     @property
     def author_name(self):
         return self.author.user.full_name
-    
+
     @property
     def author_city(self):
-        return self.author.user.address.city
+        if self.author.user.address:
+            return self.author.user.address.city
+        return None
 
     def __str__(self):
         return self.headline
