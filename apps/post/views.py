@@ -21,7 +21,7 @@ from utils.permissions import IsSellerORRead
 
 
 class PostListCreateView(ListCreateAPIView):
-    authentication_classes = [IsSellerORRead]
+    permission_classes = [IsSellerORRead]
     serializer_class = PostSerializer
     queryset = Post.objects.all()
     pagination_class = APIPagination

@@ -4,17 +4,10 @@ import uuid
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from user.models import User
-from common.models import Favorite
-
-# from seller.models import Seller
-
-# Create your models here.
 
 
 class ProductCategory(models.Model):
     name = models.CharField(_("name"), max_length=50)
-    icon = models.FileField(_("icon"), upload_to="product/category", max_length=200)
 
     class Meta:
         db_table = "product_category"
@@ -63,7 +56,7 @@ class Product(models.Model):
     )
     quantity_unit = models.CharField(_("unit"), max_length=50)
     total_quantity = models.DecimalField(
-        _("quantity"),
+        _("total quantity"),
         max_digits=10,
         decimal_places=2,
         validators=[MinValueValidator(Decimal(0.01))],
@@ -90,7 +83,9 @@ class Product(models.Model):
 
     @property
     def new_price(self) -> float:
-        return self.price - (self.price * self.discount / 100)
+        if self.discount > Decimal(0):
+            return self.price - (self.price * self.discount / 100)
+        self.price
 
     @property
     def seller_name(self):
@@ -129,17 +124,3 @@ class ProductImage(models.Model):
 
     def __str__(self) -> str:
         return f"{self.product.name} ;{self.order}"
-
-
-class FavoriteProduct(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        db_table = "favorite_product"
-        verbose_name = _("favorite product")
-        verbose_name_plural = _("favorites product")
-
-    def __str__(self):
-        return f"{self.user.email} -> {self.product.name}"

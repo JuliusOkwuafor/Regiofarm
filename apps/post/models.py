@@ -1,9 +1,10 @@
-from typing import Any
 import uuid
+from typing import Any
 
 from common.models import Favorite
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.core.validators import MaxLengthValidator
 
 
 class Post(models.Model):
@@ -16,31 +17,44 @@ class Post(models.Model):
         db_index=True,
     )
     author = models.ForeignKey(
-        "seller.Seller", verbose_name=_("author"), on_delete=models.CASCADE
+        "seller.Seller",
+        verbose_name=_("author"),
+        related_name="post",
+        on_delete=models.CASCADE,
     )
     headline = models.CharField(_("headline"), max_length=50)
-    content = models.TextField(_("content"), max_length=1000)
-    link = models.URLField(_(""), max_length=200)
-    notify_followers = models.BooleanField(_("notify followers"))
+    content = models.TextField(_("content"), validators=[MaxLengthValidator(1000)])
+    link = models.URLField(_("link"), max_length=250, blank=True, null=True)
+    notify_followers = models.BooleanField(_("notify followers"), default=False)
     is_active = models.BooleanField(_("is active"), default=True)
     created_at = models.DateTimeField(_("created at"), auto_now_add=True)
     updated_at = models.DateTimeField(_("updated at"), auto_now=True)
 
+    objects = models.Manager()
+
     class Meta:
-        db_table = "post"
+        db_table = "news"
         verbose_name = _("post")
         verbose_name_plural = _("posts")
 
     @property
     def total_views(self) -> int:
-        return self.post_view.count()
+        return self.post.count()
 
     @property
     def total_likes(self):
         return Favorite.objects.filter(object_id=self.pk).count()
 
+    @property
+    def author_name(self):
+        return self.author.user.full_name
+    
+    @property
+    def author_city(self):
+        return self.author.user.address.city
+
     def __str__(self):
-        return self.title
+        return self.headline
 
 
 class PostImage(models.Model):
@@ -61,7 +75,9 @@ class PostImage(models.Model):
         verbose_name = _("post image")
         verbose_name_plural = _("post images")
 
-    def delete(self, using: Any = ..., keep_parents: bool = ...) -> tuple[int, dict[str, int]]:
+    def delete(
+        self, using: Any = ..., keep_parents: bool = ...
+    ) -> tuple[int, dict[str, int]]:
         return super().delete(using, keep_parents)
 
     def __str__(self) -> str:

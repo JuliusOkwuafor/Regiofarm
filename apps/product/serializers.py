@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Product, ProductImage, FavoriteProduct
+from .models import Product, ProductImage
 
 
 class ProductImageSerializer(serializers.ModelSerializer):
@@ -21,7 +21,7 @@ class ProductSerializer(serializers.ModelSerializer):
         exclude = ["created_at", "updated_at", "is_active"]
 
     def get_new_price(self, obj):
-        return obj.new_price()
+        return obj.new_price
 
     def create(self, validated_data):
         images = validated_data.pop("upload_images")
@@ -41,9 +41,3 @@ class ProductSerializer(serializers.ModelSerializer):
         }
         print("jj")
         return data
-
-
-class FavouriteProductSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = FavoriteProduct
-        fields = ["product"]

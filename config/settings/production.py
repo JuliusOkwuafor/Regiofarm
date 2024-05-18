@@ -12,7 +12,6 @@ CORS_ALLOW_ALL_ORIGINS = True
 DATABASES = {
     "default": dj_database_url.parse(config("DB_URL")),
 }
-print(config("DB_URL"))
 # DATABASES = {
 #     "default": {
 #         "ENGINE": "mysql.connector.django",
