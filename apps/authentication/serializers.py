@@ -45,7 +45,15 @@ class RegisterSellerSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(**user_data, role=Role.SELLER)
         address_data = validated_data.pop("address")
         UserAddress.objects.create(user=user, **address_data)
-        seller_profile = Seller.objects.create(user=user, **validated_data)
+        print(validated_data)
+        seller_profile = Seller.objects.create(
+            user=user,
+            category=validated_data["category"],
+            name=validated_data["name"],
+            ceo=validated_data["ceo"],
+            vat=validated_data["vat"],
+        )
+        print(seller_profile)
         return seller_profile
 
 

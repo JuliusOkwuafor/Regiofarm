@@ -4,13 +4,13 @@ from .views import (
     FavouritePostCreateView,
     FavouritePostDeleteView,
     PostDetailView,
-    PostListView,
+    PostListCreateView,
 )
 
 app_name = "post"
 
 urlpatterns = [
-    path("", PostListView.as_view(), name="list"),
+    path("", PostListCreateView.as_view(), name="list"),
     path("<uuid:pk>", PostDetailView.as_view(), name="detail"),
     path(
         "favorite/create",

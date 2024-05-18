@@ -2,20 +2,21 @@ import os
 
 from .base import *
 import dj_database_url
-ALLOWED_HOSTS = ["regio-backend.onrender.com"]
+
+ALLOWED_HOSTS = ["regio-backend.onrender.com", "127.0.0.1"]
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }
-
 DATABASES = {
-    "default": dj_database_url.parse(config("DB_URL")),
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
 }
+
+# DATABASES = {
+#     "default": dj_database_url.parse(config("DB_URL")),
+# }
 # media upload and accessing
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
@@ -28,4 +29,3 @@ EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
 # EMAIL_USE_TLS = True
 EMAIL_USE_SSL = True
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-

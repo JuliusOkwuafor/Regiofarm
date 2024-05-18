@@ -11,6 +11,10 @@ class ProductImageSerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     images = ProductImageSerializer(many=True, read_only=True)
     new_price = serializers.SerializerMethodField(read_only=True)
+    upload_images = serializers.ListField(
+        child=serializers.ImageField(allow_empty_file=False, use_url=True),
+        write_only=True,
+    )
 
     class Meta:
         model = Product
@@ -18,6 +22,15 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def get_new_price(self, obj):
         return obj.new_price()
+
+    def create(self, validated_data):
+        images = validated_data.pop("upload_images")
+        product = Product.objects.create(**validated_data)
+        order = 0
+        for image in images:
+            ProductImage.objects.create(product=product, image=image, order=order)
+            order += 1
+        return product
 
     def to_representation(self, instance):
         dt = super().to_representation(instance)

@@ -1,3 +1,4 @@
+from typing import Any
 import uuid
 
 from common.models import Favorite
@@ -59,6 +60,9 @@ class PostImage(models.Model):
         db_table = "post_image"
         verbose_name = _("post image")
         verbose_name_plural = _("post images")
+
+    def delete(self, using: Any = ..., keep_parents: bool = ...) -> tuple[int, dict[str, int]]:
+        return super().delete(using, keep_parents)
 
     def __str__(self) -> str:
         return f"{self.post.headline} ;{self.order}"

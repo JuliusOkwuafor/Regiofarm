@@ -15,6 +15,10 @@ class PostSerializer(serializers.ModelSerializer):
     total_likes = serializers.SerializerMethodField(read_only=True)
     author_name = serializers.SerializerMethodField(read_only=True)
     author_city = serializers.SerializerMethodField(read_only=True)
+    upload_images = serializers.ListField(
+        child=serializers.ImageField(allow_empty_file=False, use_url=True),
+        write_only=True,
+    )
 
     def get_total_views(self, instance: Post) -> int:
         return instance.total_views()
@@ -27,6 +31,15 @@ class PostSerializer(serializers.ModelSerializer):
 
     def get_author_city(self, instance: Post) -> str:
         return instance.author.user.address.city
+
+    def create(self, validated_data):
+        images = validated_data.pop("upload_images")
+        post = Post.objects.create(**validated_data)
+        order = 0
+        for image in images:
+            PostImage.objects.create(post=post, image=image, order=order)
+            order += 1
+        return post
 
     class Meta:
         model = Post
@@ -41,6 +54,7 @@ class PostSerializer(serializers.ModelSerializer):
             "images",
             "created_at",
             "author_city",
+            "upload_images",
         ]
         extra_kwargs = {
             "id": {"read_only": True},

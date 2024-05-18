@@ -1,7 +1,6 @@
 from common.models import Favorite
 from common.serializers import FavoriteSerializer
 from common.views import FavoriteUtils
-from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
 from rest_framework import permissions, status
 from rest_framework.generics import (
@@ -11,17 +10,14 @@ from rest_framework.generics import (
     RetrieveUpdateDestroyAPIView,
 )
 from rest_framework.request import Request
-from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from utils.paginations import APIPagination
 from utils.permissions import IsSellerORRead
 from utils.response import APIResponse
 
-from .models import FavoriteProduct, Product, ProductImage
+from .models import Product, ProductImage
 from .serializers import ProductImageSerializer, ProductSerializer
-
-# Create your views here.
 
 
 class ProductListCreateView(ListCreateAPIView):

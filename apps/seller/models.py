@@ -43,7 +43,6 @@ class Seller(models.Model):
         verbose_name=_("user"),
         related_name="seller",
         on_delete=models.CASCADE,
-        editable=False,
     )
     category = models.ForeignKey(
         SellerCategory,
@@ -110,8 +109,8 @@ class Seller(models.Model):
     created_at = models.DateTimeField(_("created at"), auto_now_add=True)
     updated_at = models.DateTimeField(_("updated at"), auto_now=True)
 
+    objects = models.Manager()
     is_verified = SellerVerifiedManager()
-    objects = SellerManager()
 
     class Meta:
         db_table = "seller"

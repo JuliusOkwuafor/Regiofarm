@@ -9,7 +9,7 @@ from rest_framework.filters import SearchFilter
 from rest_framework.generics import (
     CreateAPIView,
     DestroyAPIView,
-    ListAPIView,
+    ListCreateAPIView,
     RetrieveUpdateDestroyAPIView,
 )
 
@@ -20,8 +20,8 @@ from .serializers import PostSerializer
 from utils.permissions import IsSellerORRead
 
 
-class PostListView(ListAPIView):
-    authentication_classes = [permissions.IsAuthenticated]
+class PostListCreateView(ListCreateAPIView):
+    authentication_classes = [IsSellerORRead]
     serializer_class = PostSerializer
     queryset = Post.objects.all()
     pagination_class = APIPagination
@@ -70,12 +70,12 @@ class FavouritePostCreateView(CreateAPIView):
 
 
 class FavouritePostDeleteView(DestroyAPIView):
-    permission_classes = [permissions.IsAuthenticated,IsSellerORRead]
+    permission_classes = [permissions.IsAuthenticated, IsSellerORRead]
     serializer_class = FavoriteSerializer
     queryset = Favorite.objects.all()
 
     # def get_queryset(self):
-    #     return 
+    #     return
 
     def delete(self, request, pk, *args, **kwargs):
         return FavoriteUtils.delete_favorite(pk=pk, user=request.user)
