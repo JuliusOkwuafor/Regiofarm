@@ -7,6 +7,10 @@ from django.utils.translation import gettext_lazy as _
 from django.core.validators import MaxLengthValidator
 
 
+def upload_to(instance, filename):
+    return f"post/{instance.post.id}/{filename}"
+
+
 class Post(models.Model):
     id = models.UUIDField(
         _("id"),
@@ -66,7 +70,7 @@ class PostImage(models.Model):
         related_name="images",
         on_delete=models.CASCADE,
     )
-    image = models.FileField(_("image"), upload_to="post/images", max_length=200)
+    image = models.FileField(_("image"), upload_to=upload_to, max_length=200)
     order = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(_("is Active"), default=True)
     created_at = models.DateTimeField(_("created at"), auto_now_add=True)
@@ -80,6 +84,7 @@ class PostImage(models.Model):
     def delete(
         self, using: Any = ..., keep_parents: bool = ...
     ) -> tuple[int, dict[str, int]]:
+        self.image.delete()
         return super().delete(using, keep_parents)
 
     def __str__(self) -> str:

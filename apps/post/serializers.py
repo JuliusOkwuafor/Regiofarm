@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from seller.models import Seller
+
 from .models import Post, PostImage
 
 
@@ -33,8 +35,11 @@ class PostSerializer(serializers.ModelSerializer):
         return instance.author_city
 
     def create(self, validated_data):
+        user = self.context["request"].user
+        seller = Seller.objects.get(user=user)
         images = validated_data.pop("upload_images")
-        post = Post.objects.create(**validated_data)
+        print(user)
+        post = Post.objects.create(author=seller, **validated_data)
         order = 0
         for image in images:
             PostImage.objects.create(post=post, image=image, order=order)
@@ -48,6 +53,7 @@ class PostSerializer(serializers.ModelSerializer):
             "headline",
             "content",
             "link",
+            "author",
             "author_name",
             "author_city",
             "total_views",
@@ -58,6 +64,7 @@ class PostSerializer(serializers.ModelSerializer):
         ]
         extra_kwargs = {
             "id": {"read_only": True},
+            "author": {"read_only": True},
             "view_count": {"read_only": True},
         }
 

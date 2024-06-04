@@ -17,8 +17,8 @@ from seller.models import Seller
 
 from utils.paginations import APIPagination
 from utils.permissions import IsSellerORRead
-
-from .serializers import SellerSerializer
+from common.models import Order
+from .serializers import SellerSerializer, SellerOrderSerializer
 
 # Create your views here.
 
@@ -100,7 +100,6 @@ class FavouriteSellerDeleteView(generics.DestroyAPIView):
     serializer_class = FavoriteSerializer
     queryset = Favorite.objects.all()
 
-
     def delete(self, request, pk, *args, **kwargs):
         return FavoriteUtils.delete_favorite(pk=pk, user=request.user)
 
@@ -125,3 +124,27 @@ class SellersPostListView(generics.ListAPIView):
     def get_queryset(self):
         seller_id = self.kwargs.get(self.lookup_field)
         return Post.objects.filter(author__id=seller_id)
+
+
+class SellersOrderList(generics.ListAPIView):
+    serializer_class = SellerOrderSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["status"]
+    pagination_class = APIPagination
+    lookup_field = "pk"
+
+    def get_queryset(self):
+        seller_id = self.kwargs.get(self.lookup_field)
+        return Order.objects.filter(seller__id=seller_id)
+
+
+class SellersOrderDetailView(generics.RetrieveUpdateAPIView):
+    serializer_class = SellerOrderSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    lookup_field = "pk"
+
+    def get_queryset(self):
+        seller_id = self.kwargs.get("pk")
+        order_id = self.kwargs.get("order_id")
+        return Order.objects.filter(seller__id=seller_id, id=order_id)

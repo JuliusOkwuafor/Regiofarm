@@ -4,9 +4,11 @@ from .views import (
     FavouriteSellerCreateView,
     FavouriteSellerDeleteView,
     SellerListView,
-    SellerView,
-    SellersProductListView,
+    SellersOrderDetailView,
+    SellersOrderList,
     SellersPostListView,
+    SellersProductListView,
+    SellerView,
 )
 
 app_name = "seller"
@@ -27,7 +29,8 @@ urlpatterns = [
     path(
         "<uuid:pk>/products", SellersProductListView.as_view(), name="seller_products"
     ),
-    path(
-        "<uuid:pk>/posts", SellersPostListView.as_view(), name="seller_products"
-    ),
+    path("<uuid:pk>/posts", SellersPostListView.as_view(), name="seller_products"),
+    path("<uuid:pk>/orders", SellersOrderList.as_view(), name="seller_order"),
+    path("<uuid:pk>/orders/<uuid:order_id>", SellersOrderDetailView.as_view(), name="seller_order"),
+
 ]

@@ -171,3 +171,5 @@ CELERY_BROKER_URL = config("CELERY_BROKER_URL")
 
 # otp
 OTP_LIFESPAN = 10
+
+# celery -A config worker -l DEBUG

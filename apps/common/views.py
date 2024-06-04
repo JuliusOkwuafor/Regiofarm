@@ -1,12 +1,11 @@
-from rest_framework import permissions, status
-from rest_framework.generics import CreateAPIView, DestroyAPIView
-from rest_framework.response import Response
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
-
-from .models import Favorite
-from .serializers import FavoriteSerializer
+from rest_framework import generics, permissions, status
+from rest_framework.response import Response
 from user.models import User
+
+from .models import Favorite, Order
+from .serializers import OrderSerializer
 
 
 class FavoriteUtils:
@@ -23,7 +22,9 @@ class FavoriteUtils:
         # print(ContentType.objects.filter(model="Product"))
         try:
             # import pdb;pdb.set_trace()
-            content_type = ContentType.objects.get_by_natural_key(app_label=app_label, model=model)
+            content_type = ContentType.objects.get_by_natural_key(
+                app_label=app_label, model=model
+            )
             model = content_type.model_class()
             print(model)
             get_object_or_404(model, pk=object_id)
@@ -62,3 +63,26 @@ class FavoriteUtils:
         # Delete the favorite object
         favorite.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class OrderCreateView(generics.CreateAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+        return super().perform_create(serializer)
+
+
+class OrderDetailView(generics.RetrieveUpdateAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    lookup_field = "pk"
+
+    def get_object(self):
+        return get_object_or_404(
+            Order, pk=self.kwargs.get("pk"), owner=self.request.user
+        )
+

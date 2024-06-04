@@ -1,9 +1,14 @@
 from decimal import Decimal
+from typing import Any
 import uuid
 
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+
+
+def upload_to(instance, filename):
+    return f"product/{instance.product.id}/{filename}"
 
 
 class ProductCategory(models.Model):
@@ -112,7 +117,7 @@ class ProductImage(models.Model):
         related_name="images",
         on_delete=models.CASCADE,
     )
-    image = models.FileField(_("image"), upload_to="product/images", max_length=200)
+    image = models.FileField(_("image"), upload_to=upload_to, max_length=200)
     order = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(_("created at"), auto_now_add=True)
     updated_at = models.DateTimeField(_("updated at"), auto_now=True)
@@ -124,3 +129,9 @@ class ProductImage(models.Model):
 
     def __str__(self) -> str:
         return f"{self.product.name} ;{self.order}"
+
+    def delete(
+        self, using: Any = ..., keep_parents: bool = ...
+    ) -> tuple[int, dict[str, int]]:
+        self.image.delete()
+        return super().delete(using, keep_parents)

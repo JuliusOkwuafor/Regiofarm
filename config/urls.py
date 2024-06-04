@@ -22,6 +22,11 @@ api_version = "api/v1"
 
 urlpatterns = [
     path(
+        f"{api_version}/swagger<format>/",
+        schema_view.without_ui(cache_timeout=0),
+        name="schema-json",
+    ),
+    path(
         f"{api_version}/swagger/",
         schema_view.with_ui("swagger", cache_timeout=0),
         name="schema-swagger-ui",
@@ -38,5 +43,5 @@ urlpatterns = [
     path(f"{api_version}/sellers/", include("apps.seller.urls", namespace="seller")),
     path(f"{api_version}/products/", include("product.urls", namespace="product")),
     path(f"{api_version}/posts/", include("post.urls", namespace="post")),
-    # path(f"{api_version}/", include("common.urls", namespace="common")),
+    path(f"{api_version}/", include("common.urls", namespace="common")),
 ]

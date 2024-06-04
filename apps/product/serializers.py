@@ -1,4 +1,6 @@
 from rest_framework import serializers
+
+from seller.models import Seller
 from .models import Product, ProductImage
 
 
@@ -19,13 +21,19 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         exclude = ["created_at", "updated_at", "is_active"]
+        extra_kwargs = {
+            "id": {"read_only": True},
+            "seller": {"read_only": True},
+        }
 
     def get_new_price(self, obj):
         return obj.new_price
 
     def create(self, validated_data):
+        user = self.context.get("request").user
+        seller = Seller.objects.get(user=user)
         images = validated_data.pop("upload_images")
-        product = Product.objects.create(**validated_data)
+        product = Product.objects.create(seller=seller, **validated_data)
         order = 0
         for image in images:
             ProductImage.objects.create(product=product, image=image, order=order)

@@ -12,12 +12,18 @@ from .enums import Role
 from .managers import UserManager
 
 
+def upload_pic_to(instance, filename):
+    return f"users/{instance.id}/{filename}"
+
+
 class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(_("id"), primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(_("email address"), unique=True)
     firstname = models.CharField(_("first name"), max_length=150)
     lastname = models.CharField(_("last name"), max_length=150)
-    photo = models.ImageField(_("Photo"), upload_to="photos/", blank=True, null=True)
+    photo = models.ImageField(
+        _("Photo"), upload_to=upload_pic_to, blank=True, null=True
+    )
     language = models.CharField(_("language"), max_length=50)
     currency = models.CharField(_("currency"), max_length=10)
 
@@ -59,6 +65,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name = _("user")
         verbose_name_plural = _("users")
         ordering = ["-created_at"]
+
+    def delete(self):
+        self.photo.delete()
+        super().delete()
 
 
 class OTP(models.Model):

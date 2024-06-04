@@ -22,7 +22,7 @@ from .serializers import ProductImageSerializer, ProductSerializer
 
 class ProductListCreateView(ListCreateAPIView):
     serializer_class = ProductSerializer
-    permission_classes = [IsSellerORRead]
+    permission_classes = [permissions.IsAuthenticated, IsSellerORRead]
     pagination_class = APIPagination
 
     def get_queryset(self):

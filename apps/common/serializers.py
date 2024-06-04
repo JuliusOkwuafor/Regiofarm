@@ -3,7 +3,7 @@ from .models import Favorite
 from seller.models import Seller
 from product.models import Product
 from post.models import Post
-from django.shortcuts import get_object_or_404
+from .models import Order, OrderItem
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
@@ -65,3 +65,73 @@ class FavoriteSerializer(serializers.ModelSerializer):
             "content_type": {"read_only": True},
             "object_id": {"read_only": True},
         }
+
+
+class OrderItemSerializer(serializers.ModelSerializer):
+    product_name = serializers.SerializerMethodField()
+
+    def get_product_name(self, obj):
+        return obj.product.name
+
+    class Meta:
+        model = OrderItem
+        fields = ["id", "order", "product", "product_name", "quantity", "price"]
+        extra_kwargs = {
+            "id": {"read_only": True},
+            "product_name": {"read_only": True},
+        }
+
+    def save(self, **kwargs):
+        order_id = self.validated_data["order"]
+        product_id = self.validated_data["product"]
+        quantity = self.validated_data["quantity"]
+        try:
+            order_item = OrderItem.objects.get(
+                product__id=product_id, order__id=order_id
+            )
+            order_item.quantity += quantity
+            order_item.save()
+            self.instance = order_item
+        except OrderItem.DoesNotExist:
+            validated_data = self.validated_data
+            self.instance = OrderItem.objects.create(**validated_data)
+
+        return self.instance
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    items = OrderItemSerializer(many=True, required=False)
+    total = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Order
+        fields = [
+            "id",
+            "owner",
+            "seller",
+            "status",
+            "tip",
+            "items",
+            # "order_item",
+            "total",
+            "payment_method",
+            "note",
+            "placed_at",
+        ]
+        extra_kwargs = {
+            "id": {"read_only": True},
+            "owner": {"read_only": True},
+            "note": {"read_only": True},
+        }
+
+    def create(self, validated_data):
+        order_items = validated_data.pop("items", [])
+        order = Order.objects.create(**validated_data)
+        for item_data in order_items:
+            OrderItem.objects.create(order=order, **item_data)
+        return order
+
+    def get_total(self, obj: Order):
+        items = obj.order_item.all()
+        total = sum([item.quantity * item.price for item in items])
+        return total

@@ -10,7 +10,8 @@ from product.models import Product
 from user.models import User
 from .managers import SellerVerifiedManager
 
-# Create your models here.
+def upload_to(instance, filename):
+    return f'seller/{instance.seller.id}/{filename}'
 
 
 class SellerCategory(models.Model):

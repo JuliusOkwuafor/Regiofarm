@@ -21,21 +21,20 @@ from utils.permissions import IsSellerORRead
 
 
 class PostListCreateView(ListCreateAPIView):
-    permission_classes = [IsSellerORRead]
+    permission_classes = [permissions.IsAuthenticated, IsSellerORRead]
     serializer_class = PostSerializer
     queryset = Post.objects.all()
     pagination_class = APIPagination
     filter_backends = [SearchFilter]
     search_fields = ["headline", "author"]
 
-    def get_context_data(self, **kwargs) -> dict[str, Any]:
-        context = super().get_context_data(**kwargs)
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
         context["detail"] = False
         return context
 
-
 class PostDetailView(RetrieveUpdateDestroyAPIView):
-    authentication_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
     serializer_class = PostSerializer
     queryset = Post.objects.filter(is_active=True)
     lookup_field = "pk"
