@@ -7,10 +7,14 @@ from common.serializers import OrderItemSerializer
 
 
 class SellerSerializer(serializers.ModelSerializer):
+    total_likes = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Seller
         exclude = ["created_at", "updated_at", "is_active", "is_subscribed"]
+
+    def get_total_likes(self,obj):
+        return obj.total_likes()
 
     def to_representation(self, instance):
         dt = super().to_representation(instance)

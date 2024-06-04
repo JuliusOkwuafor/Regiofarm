@@ -30,8 +30,7 @@ class ProductSerializer(serializers.ModelSerializer):
         return obj.new_price
 
     def create(self, validated_data):
-        user = self.context.get("request").user
-        seller = Seller.objects.get(user=user)
+        seller = self.context.get("request").user.seller
         images = validated_data.pop("upload_images")
         product = Product.objects.create(seller=seller, **validated_data)
         order = 0
@@ -47,5 +46,4 @@ class ProductSerializer(serializers.ModelSerializer):
             "message": "successful",
             "data": dt,
         }
-        print("jj")
         return data

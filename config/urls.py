@@ -32,6 +32,7 @@ urlpatterns = [
         name="schema-swagger-ui",
     ),
     path("admin/", admin.site.urls),
+    path("__debug__/", include("debug_toolbar.urls")),
     path(
         f"{api_version}/auth/",
         include("apps.authentication.urls", namespace="authentication"),

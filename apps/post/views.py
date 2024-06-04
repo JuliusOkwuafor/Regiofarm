@@ -15,7 +15,7 @@ from rest_framework.generics import (
 
 from utils.paginations import APIPagination
 
-from .models import Post, PostView
+from .models import Post, PostImage, PostView
 from .serializers import PostSerializer
 from utils.permissions import IsSellerORRead
 
@@ -23,7 +23,6 @@ from utils.permissions import IsSellerORRead
 class PostListCreateView(ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated, IsSellerORRead]
     serializer_class = PostSerializer
-    queryset = Post.objects.all()
     pagination_class = APIPagination
     filter_backends = [SearchFilter]
     search_fields = ["headline", "author"]
@@ -32,6 +31,22 @@ class PostListCreateView(ListCreateAPIView):
         context = super().get_serializer_context()
         context["detail"] = False
         return context
+
+    def get_queryset(self):
+        if self.request.method == "GET":
+            return (
+                Post.objects.prefetch_related(
+                    "images",
+                    "post_view",
+                    "author",
+                    "author__user",
+                    "author__user__address",
+                )
+                .filter(is_active=True)
+                .select_related("author")
+            )
+        return Post.objects.all()
+
 
 class PostDetailView(RetrieveUpdateDestroyAPIView):
     # permission_classes = [permissions.IsAuthenticated]

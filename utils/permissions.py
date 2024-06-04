@@ -30,4 +30,6 @@ class IsSellerORRead(BasePermission):
     def has_object_permission(self, request, view, obj):
         # Read permission is granted if user is authenticated and owns the object,
         # otherwise read-only access (GET) is allowed
+        if obj.seller:
+            return obj.seller == request.user or request.user.is_staff
         return obj.user == request.user or request.user.is_staff

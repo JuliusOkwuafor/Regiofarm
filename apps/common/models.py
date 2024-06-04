@@ -12,7 +12,7 @@ from .enums import OrderStatus, PaymentMethod
 class Favorite(models.Model):
     user = models.ForeignKey("user.User", on_delete=models.CASCADE)
     content_type = models.ForeignKey(
-        "contenttypes.ContentType", on_delete=models.CASCADE
+        "contenttypes.ContentType", on_delete=models.CASCADE, related_name="favorite"
     )
     object_id = models.UUIDField()
     content_object = GenericForeignKey("content_type", "object_id")

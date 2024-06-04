@@ -35,10 +35,8 @@ class PostSerializer(serializers.ModelSerializer):
         return instance.author_city
 
     def create(self, validated_data):
-        user = self.context["request"].user
-        seller = Seller.objects.get(user=user)
+        seller = self.context["request"].user.seller
         images = validated_data.pop("upload_images")
-        print(user)
         post = Post.objects.create(author=seller, **validated_data)
         order = 0
         for image in images:

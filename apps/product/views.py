@@ -18,6 +18,7 @@ from utils.response import APIResponse
 
 from .models import Product, ProductImage
 from .serializers import ProductImageSerializer, ProductSerializer
+from django.conf import settings
 
 
 class ProductListCreateView(ListCreateAPIView):
@@ -27,7 +28,11 @@ class ProductListCreateView(ListCreateAPIView):
 
     def get_queryset(self):
         if self.request.method == "GET":
-            return Product.objects.filter(is_active=True)
+            return (
+                Product.objects.filter(is_active=True)
+                .prefetch_related("images")
+                .select_related("seller", "category")
+            )
         return Product.objects.all()
 
 

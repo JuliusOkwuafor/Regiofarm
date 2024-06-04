@@ -128,7 +128,7 @@ class ProductImage(models.Model):
         verbose_name_plural = _("product images")
 
     def __str__(self) -> str:
-        return f"{self.product.name} ;{self.order}"
+        return f"{self.product.name} -> {self.order}"
 
     def delete(
         self, using: Any = ..., keep_parents: bool = ...

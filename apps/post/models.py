@@ -34,7 +34,7 @@ class Post(models.Model):
     created_at = models.DateTimeField(_("created at"), auto_now_add=True)
     updated_at = models.DateTimeField(_("updated at"), auto_now=True)
 
-    objects = models.Manager()
+    # objects = models.Manager()
 
     class Meta:
         db_table = "news"

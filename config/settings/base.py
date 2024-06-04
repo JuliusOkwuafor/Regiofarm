@@ -43,6 +43,7 @@ THIRD_PARTY_APPS = [
     "drf_yasg",
     "corsheaders",
     "django_filters",
+    "debug_toolbar",
 ]
 
 INSTALLED_APPS = LOCAL_APPS + THIRD_PARTY_APPS + DJANGO_APPS
@@ -57,6 +58,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -173,3 +175,9 @@ CELERY_BROKER_URL = config("CELERY_BROKER_URL")
 OTP_LIFESPAN = 10
 
 # celery -A config worker -l DEBUG
+
+# DJANGO TOOLBAR settings
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]

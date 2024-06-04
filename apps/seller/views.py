@@ -25,18 +25,15 @@ from .serializers import SellerSerializer, SellerOrderSerializer
 
 class SellerView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = SellerSerializer
-    queryset = Seller.objects.all()
     lookup_field = "pk"
-    permission_classes = [IsSellerORRead]
+    permission_classes = [permissions.IsAuthenticated]
 
-    # def get_queryset(self):
-
-    #     return super().get_queryset()
+    def get_queryset(self):
+        return Seller.objects.filter(user=self.request.user)
 
 
 class SellerListView(generics.ListAPIView):
     serializer_class = SellerSerializer
-    queryset = Seller.is_verified.all()
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_fields = ["category"]
@@ -49,14 +46,16 @@ class SellerListView(generics.ListAPIView):
         if is_open:
             now = datetime.now(tz=timezone.utc)
             if is_open == "opened":
-                return Seller.is_verified.filter(
+                queryset = Seller.is_verified.filter(
                     opening_hour__lte=now, closing_hour__gte=now
                 )
             elif is_open == "closed":
-                return Seller.is_verified.exclude(
+                queryset = Seller.is_verified.exclude(
                     opening_hour__lte=now, closing_hour__gte=now
                 )
-        return super().get_queryset()
+        else:
+            queryset = Seller.is_verified.all()
+        return queryset.select_related("category")
 
     @swagger_auto_schema(
         manual_parameters=[
@@ -112,7 +111,11 @@ class SellersProductListView(generics.ListAPIView):
 
     def get_queryset(self):
         seller_id = self.kwargs.get(self.lookup_field)
-        return Product.objects.filter(is_active=True, seller__id=seller_id)
+        return (
+            Product.objects.filter(is_active=True, seller__id=seller_id)
+            .prefetch_related("images")
+            .select_related("seller", "category")
+        )
 
 
 class SellersPostListView(generics.ListAPIView):
@@ -123,7 +126,7 @@ class SellersPostListView(generics.ListAPIView):
 
     def get_queryset(self):
         seller_id = self.kwargs.get(self.lookup_field)
-        return Post.objects.filter(author__id=seller_id)
+        return Post.objects.filter(author__id=seller_id).select_related("author")
 
 
 class SellersOrderList(generics.ListAPIView):
