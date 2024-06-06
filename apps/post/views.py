@@ -27,11 +27,6 @@ class PostListCreateView(ListCreateAPIView):
     filter_backends = [SearchFilter]
     search_fields = ["headline", "author"]
 
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        context["detail"] = False
-        return context
-
     def get_queryset(self):
         if self.request.method == "GET":
             return (
@@ -45,7 +40,7 @@ class PostListCreateView(ListCreateAPIView):
                 .filter(is_active=True)
                 .select_related("author")
             )
-        return Post.objects.all()
+        return Post.objects.filter(is_active=True)
 
 
 class PostDetailView(RetrieveUpdateDestroyAPIView):

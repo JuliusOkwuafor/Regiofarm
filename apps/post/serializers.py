@@ -65,11 +65,3 @@ class PostSerializer(serializers.ModelSerializer):
             "author": {"read_only": True},
             "view_count": {"read_only": True},
         }
-
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        if not self.context.get("detail", True):
-            data.pop("total_views")
-            data.pop("link")
-            data.pop("total_likes")
-        return data
