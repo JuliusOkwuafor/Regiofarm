@@ -90,7 +90,7 @@ class Seller(models.Model):
         _("latitude"), blank=True, null=True, max_digits=9, decimal_places=6
     )
     longitude = models.DecimalField(
-        _("latitude"), blank=True, null=True, max_digits=9, decimal_places=6
+        _("longitude"), blank=True, null=True, max_digits=9, decimal_places=6
     )
     # link = models.URLField(_("link"), max_length=1000)
     product_discount = models.DecimalField(

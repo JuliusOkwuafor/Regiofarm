@@ -40,6 +40,7 @@ LOCAL_APPS = [
     "product",
     "post",
     "common",
+    "notification",
 ]
 
 THIRD_PARTY_APPS = [
@@ -83,7 +84,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "config.wsgi.application"
+# WSGI_APPLICATION = "config.wsgi.application"
+ASGI_APPLICATION = "config.asgi.application"
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
