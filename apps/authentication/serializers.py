@@ -7,6 +7,7 @@ from typing import Any
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from user.validators import password_validator
 from user.serializers import UserAddressSerializer
+from django.db import transaction
 
 
 class RegisterUserSerializer(serializers.ModelSerializer):
@@ -40,6 +41,7 @@ class RegisterSellerSerializer(serializers.ModelSerializer):
         model = Seller
         fields = ["user", "category", "name", "ceo", "vat", "address"]
 
+    @transaction.atomic
     def create(self, validated_data):
         user_data = validated_data.pop("user")
         user = User.objects.create_user(**user_data, role=Role.SELLER)

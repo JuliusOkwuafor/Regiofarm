@@ -29,15 +29,20 @@ class ProductSerializer(serializers.ModelSerializer):
     def get_new_price(self, obj):
         return obj.new_price
 
+
     def create(self, validated_data):
-        seller = self.context.get("request").user.seller
-        images = validated_data.pop("upload_images")
-        product = Product.objects.create(seller=seller, **validated_data)
-        order = 0
-        for image in images:
-            ProductImage.objects.create(product=product, image=image, order=order)
-            order += 1
-        return product
+        role = self.context.get("request").user.role == 'seller'
+        # import pdb;pdb.set_trace()
+        if role:
+            seller = self.context["request"].user.seller
+            images = validated_data.pop("upload_images")
+            product = Product.objects.create(seller=seller, **validated_data)
+            order = 0
+            for image in images:
+                ProductImage.objects.create(product=product, image=image, order=order)
+                order += 1
+            return product
+        raise serializers.ValidationError('only a seller can access this endpoint')
 
     def to_representation(self, instance):
         dt = super().to_representation(instance)
