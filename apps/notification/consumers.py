@@ -1,8 +1,8 @@
 import json
 
-from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.generic.websocket import WebsocketConsumer
 
-class NotificationConsumer(AsyncWebsocketConsumer):
+class NotificationConsumer(WebsocketConsumer):
     def connect(self):
         self.accept()
 

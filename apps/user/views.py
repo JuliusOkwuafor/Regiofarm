@@ -1,4 +1,4 @@
-from common.models import Favorite
+from common.models import Favorite, Order
 from common.serializers import FavoriteSerializer
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import generics, permissions, status
@@ -8,7 +8,7 @@ from user.models import User, UserAddress
 from utils.permissions import IsUserORAdmin
 from utils.response import APIResponse
 
-from .serializers import UserAddressSerializer, UserSerializer
+from .serializers import UserAddressSerializer, UserSerializer,UserOrderSerializer
 
 
 class UserView(generics.RetrieveUpdateDestroyAPIView):
@@ -68,3 +68,11 @@ class UserFavoriteListView(ListAPIView):
 
     def get_queryset(self):
         return Favorite.objects.filter(user=self.request.user)
+
+
+class UserOrderListView(ListAPIView):
+    serializer_class = UserOrderSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Order.objects.filter(owner=self.request.user)

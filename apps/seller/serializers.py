@@ -29,6 +29,8 @@ class SellerSerializer(serializers.ModelSerializer):
 class SellerOrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True, required=False, read_only=True)
     total = serializers.SerializerMethodField(read_only=True)
+    seller_name = serializers.SerializerMethodField(read_only=True)
+    seller_profile_image = serializers.ImageField(source='seller.profile_image', read_only=True)
 
     class Meta:
         model = Order
@@ -36,6 +38,8 @@ class SellerOrderSerializer(serializers.ModelSerializer):
             "id",
             "owner",
             "seller",
+            "seller_name",
+            "seller_profile_image",
             "status",
             "tip",
             "items",
@@ -53,7 +57,14 @@ class SellerOrderSerializer(serializers.ModelSerializer):
             "placed_at": {"read_only": True},
         }
 
-    def get_total(self, obj: Order):
+    def get_seller_name(self, obj):
+        return obj.seller.name
+
+    # def get_seller_image(self, obj):
+    #     image_url = obj.seller.profile_image.url
+    #     return image_url if image_url else None
+
+    def get_total(self, obj):
         items = obj.order_item.all()
         total = sum([item.quantity * item.price for item in items])
         return total

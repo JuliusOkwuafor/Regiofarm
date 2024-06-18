@@ -101,7 +101,7 @@ class OrderItem(models.Model):
     )
     price = models.DecimalField(
         _("price"),
-        max_digits=5,
+        max_digits=20,
         decimal_places=2,
         validators=[MinValueValidator(Decimal(0.01))],
     )
