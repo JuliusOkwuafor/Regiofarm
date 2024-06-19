@@ -15,6 +15,7 @@ from channels.security.websocket import AllowedHostsOriginValidator
 from decouple import config
 from django.core.asgi import get_asgi_application
 from .middlewares import JWTAuthMiddleware
+import django
 
 from apps.notification.routing import websocket_urlpatterns
 
@@ -22,6 +23,7 @@ if config("DEBUG", cast=bool):
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.development")
 else:
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.production")
+django.setup()
 
 django_asgi_app = get_asgi_application()
 application = ProtocolTypeRouter(
