@@ -1,7 +1,10 @@
 from common.models import Favorite
 from common.serializers import FavoriteSerializer
 from common.views import FavoriteUtils
+from django.conf import settings
 from django.shortcuts import get_object_or_404
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import permissions, status
 from rest_framework.generics import (
     CreateAPIView,
@@ -18,7 +21,6 @@ from utils.response import APIResponse
 
 from .models import Product, ProductImage
 from .serializers import ProductImageSerializer, ProductSerializer
-from django.conf import settings
 
 
 class ProductListCreateView(ListCreateAPIView):
@@ -86,6 +88,18 @@ class FavouriteProductCreateView(CreateAPIView):
     def get_queryset(self):
         return Favorite.objects.filter(user=self.request.user)
 
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=["object_id"],
+            properties={
+                "object_id": openapi.Schema(
+                    type=openapi.TYPE_STRING, description="Product ID"
+                )
+            },
+        ),
+        operation_description="favorite product endpoint",
+    )
     def post(self, request: Request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)

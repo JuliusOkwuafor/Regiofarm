@@ -1,9 +1,9 @@
-from typing import Any
-
 from common.models import Favorite
 from common.serializers import FavoriteSerializer
 from common.views import FavoriteUtils
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import permissions
 from rest_framework.filters import SearchFilter
 from rest_framework.generics import (
@@ -14,10 +14,10 @@ from rest_framework.generics import (
 )
 
 from utils.paginations import APIPagination
+from utils.permissions import IsSellerORRead
 
 from .models import Post, PostImage, PostView
 from .serializers import PostSerializer
-from utils.permissions import IsSellerORRead
 
 
 class PostListCreateView(ListCreateAPIView):
@@ -63,6 +63,18 @@ class FavouritePostCreateView(CreateAPIView):
     def get_queryset(self):
         return Favorite.objects.filter(user=self.request.user)
 
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=["object_id"],
+            properties={
+                "object_id": openapi.Schema(
+                    type=openapi.TYPE_STRING, description="Post ID"
+                )
+            },
+        ),
+        operation_description="favorite post endpoint",
+    )
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)

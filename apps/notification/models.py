@@ -12,6 +12,7 @@ class Notification(models.Model):
         db_table = "notification"
         verbose_name = "notification"
         verbose_name_plural = "notifications"
+        ordering = ["-created_at"]
 
     def __str__(self):
-        return self.title
+        return str(self.id)

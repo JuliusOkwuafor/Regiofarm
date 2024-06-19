@@ -79,6 +79,18 @@ class FavouriteSellerCreateView(generics.CreateAPIView):
     def get_queryset(self):
         return Favorite.objects.filter(user=self.request.user)
 
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=["object_id"],
+            properties={
+                "object_id": openapi.Schema(
+                    type=openapi.TYPE_STRING, description="seller ID"
+                )
+            },
+        ),
+        operation_description="favorite seller endpoint",
+    )
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
