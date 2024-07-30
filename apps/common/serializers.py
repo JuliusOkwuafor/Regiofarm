@@ -16,7 +16,9 @@ class FavoriteSerializer(serializers.ModelSerializer):
     def get_content_object(self, obj):
         content_type = obj.content_type
         model_class = content_type.model_class()
-        obj_ = model_class.objects.get(pk=obj.object_id)
+        print(model_class)
+        import pdb;pdb.set_trace()
+        obj_ = model_class.objects.get(id=obj.object_id)
         if model_class == Product:
             # model_class: Product
             data = {
