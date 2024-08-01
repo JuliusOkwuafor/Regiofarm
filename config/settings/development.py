@@ -3,7 +3,7 @@ import os
 from .base import *
 import dj_database_url
 
-ALLOWED_HOSTS = ["regio-backend.onrender.com", "127.0.0.1"]
+ALLOWED_HOSTS = [".onrender.com", "127.0.0.1"]
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
