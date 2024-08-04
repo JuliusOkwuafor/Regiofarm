@@ -8,6 +8,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from rest_framework_simplejwt.tokens import RefreshToken
 
+
 from .enums import Role
 from .managers import UserManager
 
@@ -51,6 +52,13 @@ class User(AbstractBaseUser, PermissionsMixin):
         refresh["role"] = self.role
         refresh["language"] = self.language
         refresh["currency"] = self.currency
+        if self.role == Role.SELLER:
+            try:
+                seller = self.seller
+                refresh["seller_id"] = str(seller.pk)
+            except:
+                pass
+           
         return {
             "refresh": str(refresh),
             "access": str(refresh.access_token),

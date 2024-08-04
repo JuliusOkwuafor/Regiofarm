@@ -17,7 +17,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
         content_type = obj.content_type
         model_class = content_type.model_class()
         print(model_class)
-        import pdb;pdb.set_trace()
+        # import pdb;pdb.set_trace()
         obj_ = model_class.objects.get(id=obj.object_id)
         if model_class == Product:
             # model_class: Product
@@ -49,7 +49,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
                 "content": obj_.content,
                 "link": obj_.link,
                 "total_views": obj_.total_views,
-                "total_likes": obj_.total_likes(),
+                "total_likes": obj_.total_likes,
                 "created_at": obj_.created_at,
             }
         else:

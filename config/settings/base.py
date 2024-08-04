@@ -20,8 +20,8 @@ DEBUG = config("DEBUG", cast=bool)
 
 # Application definition
 
-MOST_TOP_APPS = [
-]
+# MOST_TOP_APPS = [
+# ]
 
 DJANGO_APPS = [
     "django.contrib.admin",
@@ -50,7 +50,7 @@ THIRD_PARTY_APPS = [
     "debug_toolbar",
 ]
 
-INSTALLED_APPS = MOST_TOP_APPS + LOCAL_APPS + THIRD_PARTY_APPS + DJANGO_APPS
+INSTALLED_APPS = LOCAL_APPS + THIRD_PARTY_APPS + DJANGO_APPS
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
