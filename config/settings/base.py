@@ -50,7 +50,7 @@ THIRD_PARTY_APPS = [
     "debug_toolbar",
 ]
 
-INSTALLED_APPS = LOCAL_APPS + THIRD_PARTY_APPS + DJANGO_APPS
+INSTALLED_APPS =  THIRD_PARTY_APPS + DJANGO_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -198,3 +198,7 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ORIGIN_ALLOW_ALL = True
