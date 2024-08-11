@@ -23,7 +23,7 @@ def send_activation_email(sender, instance: User, created, **kwargs):
         token = activation_token.make_token(instance)
         print("here")
         try:
-            activation_mail.delay(
+            activation_mail.after_response(
                 instance.email,
                 instance.firstname,
                 uid,
@@ -38,7 +38,7 @@ def send_activation_email(sender, instance: User, created, **kwargs):
 def send_reset_email(sender, instance, created, **kwargs):
     if created:
         try:
-            reset_email.delay(
+            reset_email.after_response(
                 instance.user.email,
                 instance.user.firstname,
                 instance.code,

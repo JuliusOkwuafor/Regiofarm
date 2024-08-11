@@ -1,7 +1,12 @@
 from .base import *
 import dj_database_url
 
-ALLOWED_HOSTS = ["regio-backend.onrender.com", "127.0.0.1", "regiofarm.onrender.com"] + config("ALLOWED_HOSTS").split(",")
+ALLOWED_HOSTS = [
+    "regio-backend.onrender.com",
+    "127.0.0.1",
+    "regiofarm.onrender.com",
+    "myregio.farm",
+] + config("ALLOWED_HOSTS").split(",")
 
 # SECURE_SSL_REDIRECT = True
 # CSRF_COOKIE_SECURE = True
@@ -31,3 +36,25 @@ EMAIL_USE_SSL = True
 
 # DEFAULT_FROM_EMAIL = "noreply@regio.com"
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+# FTP Storage settings
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.ftp.FTPStorage",
+        "OPTIONS": {
+            "location": f"ftps://{config('FTP_USER')}:{config('FTP_PASSWORD')}@{config('FTP_HOST')}:21/",
+            # "allow_overwrite": False,
+            "encoding": "latin-1",
+            "base_url": f"https://myregio.farm/media/",
+        },
+    },
+    "staticfiles": {
+        # "BACKEND": "storages.backends.ftp.FTPStorage",
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        # "OPTIONS": {
+        #     "location": f"ftp://{config('FTP_USERNAME')}:{config('FTP_PASSWORD')}@{config('FTP_HOST')}:21/",
+        #     "allow_overwrite": True,
+        # },
+    },
+}
+print(f"ftp://{config('FTP_USER')}:{config('FTP_PASSWORD')}@{config('FTP_HOST')}:21/")

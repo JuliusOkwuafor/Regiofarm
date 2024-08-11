@@ -6,9 +6,10 @@ from django.template.loader import render_to_string
 
 from utils.exceptions import EmailNotSendException
 from utils.utils import Utils
+import after_response
 
 
-@shared_task
+@after_response.enable
 def send_activation_email(email, firstname, uid, token):
     print('here x2')
     data = {
@@ -30,7 +31,7 @@ def send_activation_email(email, firstname, uid, token):
         raise EmailNotSendException(full_message=e)
 
 
-@shared_task
+@after_response.enable
 def send_reset_email(email, firstname, code, otp_lifespan):
     data = {
         "to_email": email,
