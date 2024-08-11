@@ -83,7 +83,7 @@ class OTP(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="otp"
     )
-    code = models.CharField(_("Code"), max_length=4, blank=True, null=True)
+    code = models.CharField(_("Code"), max_length=6, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

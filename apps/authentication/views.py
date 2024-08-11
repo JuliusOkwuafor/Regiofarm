@@ -14,10 +14,12 @@ from utils.utils import Utils
 
 from .serializers import (
     LoginSerializer,
-    RegisterUserSerializer,RegisterSellerSerializer
+    RegisterUserSerializer,
+    RegisterSellerSerializer,
 )
 from .utils import activation_token
 from . import openapi
+
 # from seller.serializers import SellerSerializer
 
 
@@ -151,6 +153,7 @@ class RequestPasswordResetView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         code: int = self.generate_otp()
+        print(code)
         try:
             otp = Utils.get_or_none(OTP, user=user)
             if otp is not None:
@@ -159,6 +162,7 @@ class RequestPasswordResetView(APIView):
             else:
                 OTP.objects.create(user=user, code=code)
         except Exception as e:
+            print(f"error: {e}")
             return APIResponse(
                 data={},
                 msg="Error creating OTP",
