@@ -43,18 +43,12 @@ STORAGES = {
         "BACKEND": "storages.backends.ftp.FTPStorage",
         "OPTIONS": {
             "location": f"ftps://{config('FTP_USER')}:{config('FTP_PASSWORD')}@{config('FTP_HOST')}:21/",
-            # "allow_overwrite": False,
             "encoding": "latin-1",
             "base_url": f"https://myregio.farm/media/",
         },
     },
     "staticfiles": {
-        # "BACKEND": "storages.backends.ftp.FTPStorage",
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-        # "OPTIONS": {
-        #     "location": f"ftp://{config('FTP_USERNAME')}:{config('FTP_PASSWORD')}@{config('FTP_HOST')}:21/",
-        #     "allow_overwrite": True,
-        # },
     },
 }
 print(f"ftp://{config('FTP_USER')}:{config('FTP_PASSWORD')}@{config('FTP_HOST')}:21/")

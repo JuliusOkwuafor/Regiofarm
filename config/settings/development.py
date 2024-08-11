@@ -26,3 +26,20 @@ EMAIL_HOST_USER = config("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
 EMAIL_USE_SSL = True
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+
+# # FTP Storage settings
+# STORAGES = {
+#     "default": {
+#         "BACKEND": "storages.backends.ftp.FTPStorage",
+#         "OPTIONS": {
+#             "location": f"ftps://{config('FTP_USER')}:{config('FTP_PASSWORD')}@{config('FTP_HOST')}:21/",
+#             "encoding": "latin-1",
+#             "base_url": f"https://myregio.farm/media/",
+#         },
+#     },
+#     "staticfiles": {
+#         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+#     },
+# }
+# print(f"ftp://{config('FTP_USER')}:{config('FTP_PASSWORD')}@{config('FTP_HOST')}:21/")
