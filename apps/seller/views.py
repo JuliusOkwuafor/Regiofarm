@@ -20,16 +20,25 @@ from utils.permissions import IsSellerORRead
 from common.models import Order
 from .serializers import SellerSerializer, SellerOrderSerializer
 
-# Create your views here.
+
+class IsSellerORRead(permissions.BasePermission):
+    message = (
+        "You need to be authenticated and a seller to edit your own profile message "
+    )
+
+    def has_object_permission(self, request: Request, view, obj: Seller):
+        if request.user.is_authenticated:
+            return obj.user == request.user
+        return False
 
 
 class SellerView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = SellerSerializer
     lookup_field = "pk"
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsSellerORRead]
 
     def get_queryset(self):
-        return Seller.objects.filter(user=self.request.user)
+        return Seller.objects.filter(pk=self.kwargs.get(self.lookup_field))
 
 
 class SellerListView(generics.ListAPIView):
