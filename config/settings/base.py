@@ -190,17 +190,17 @@ INTERNAL_IPS = [
     "127.0.0.1",
 ]
 
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        # "BACKEND": "channels.layers.InMemoryChannelLayer",
-        "CONFIG": {
-            # "hosts": ["redis://redis-10118.c82.us-east-1-2.ec2.redns.redis-cloud.com:10118"],
-            "hosts": [f"{config('CELERY_BROKER_URL')}/0"],
-            # "hosts": [("127.0.0.1", 6379)],
-        },
-    },
-}
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "channels_redis.core.RedisChannelLayer",
+#         # "BACKEND": "channels.layers.InMemoryChannelLayer",
+#         "CONFIG": {
+#             # "hosts": ["redis://redis-10118.c82.us-east-1-2.ec2.redns.redis-cloud.com:10118"],
+#             "hosts": [f"{config('CELERY_BROKER_URL')}/0"],
+#             # "hosts": [("127.0.0.1", 6379)],
+#         },
+#     },
+# }
 
 
 CORS_ALLOW_ALL_ORIGINS = True
